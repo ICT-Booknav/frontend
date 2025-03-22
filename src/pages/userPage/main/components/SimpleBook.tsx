@@ -29,6 +29,7 @@ export default SimpleBook;
 const Book = styled.div`
   display: flex;
   width: 226px;
+  height: 330px;
   padding: 10px;
   flex-direction: column;
   justify-content: center;
