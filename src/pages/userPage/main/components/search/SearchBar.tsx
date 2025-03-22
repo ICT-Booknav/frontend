@@ -13,12 +13,14 @@ const SearchBar: React.FC<SearchBarProps> = ({ placeholder = '검색어를 입�
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && onSearch) {
       onSearch(inputValue);
+      // window.location.reload();
     }
   };
 
   const handleIconClick = () => {
     if (onSearch) {
       onSearch(inputValue);
+      // window.location.reload();
     }
   };
 
