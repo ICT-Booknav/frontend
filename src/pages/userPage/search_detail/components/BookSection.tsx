@@ -9,6 +9,8 @@ interface CardProps {
   publisher: string;
   genre?: string;
   id: string;
+  location?: number;
+  bookSize: number;
   currentstate?: boolean;
   onClick?: React.MouseEventHandler<HTMLDivElement>;
 }
@@ -20,6 +22,8 @@ const BookSection: React.FC<CardProps> = ({
   publisher,
   genre,
   id,
+  location,
+  bookSize,
   currentstate,
   onClick,
 }) => {
@@ -51,6 +55,8 @@ const BookSection: React.FC<CardProps> = ({
           publisher={publisher}
           genre={genre}
           id={id}
+          location={location}
+          bookSize={bookSize}
           currentstate={currentstate}
         />
         <OutBook onClick={handleOutBookClick}>책 꺼내기</OutBook>

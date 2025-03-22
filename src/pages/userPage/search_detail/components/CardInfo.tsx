@@ -10,6 +10,8 @@ interface CardInfoProps {
   publishYear?: string;
   genre?: string;
   id: string;
+  location?: number;
+  bookSize: number;
   currentstate?: boolean;
 }
 
@@ -20,113 +22,121 @@ const CardInfo: React.FC<CardInfoProps> = ({
   publishYear,
   genre,
   id,
+  location,
+  bookSize, 
   currentstate,
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [bookLocations, setBookLocations] = useState<
-    { id: string; available: boolean; bookLocation: { row: number; column: number } }[]
-  >([]);
   const navigate = useNavigate();
 
-  const handleDetailClick = () => {
+  const handleDetailClick = (id: string) => {
     navigate(`/search/${id}`); // 상세 페이지 이동
   };
 
   const handleStateIndicatorClick = () => {
     setIsModalOpen(true); // 모달 열기
-
-    // 더미 데이터 활용 <- 이거부터 수정해야함!!!!
-    const mockData = [
-      { id: "smallbook1", available: false, bookLocation: { row: 1, column: 1 } },
-      { id: "smallbook2", available: true, bookLocation: { row: 1, column: 2 } },
-      { id: "smallbook3", available: false, bookLocation: { row: 1, column: 3 } },
-      { id: "mediumbook1", available: true, bookLocation: { row: 2, column: 1 } },
-      { id: "largebook1", available: false, bookLocation: { row: 3, column: 1 } },
-    ];
-    setBookLocations(mockData);
   };
 
   const handleCloseModal = () => {
     setIsModalOpen(false); // 모달 닫기
   };
 
-  const smallBooks = bookLocations.filter((book) => book.id.startsWith("smallbook"));
-  const mediumBooks = bookLocations.filter((book) => book.id.startsWith("mediumbook"));
-  const largeBooks = bookLocations.filter((book) => book.id.startsWith("largebook"));
+  const generateEmptyBooks = (count: number, bookSize: number) =>
+    Array.from({ length: count }, (_, index) => ({
+      id: `${bookSize}-${index + 1}`,
+      bookSize: bookSize,
+      available: false,
+      bookLocation: {
+        row: Math.floor(index / 6) + 1, // 행 계산
+        column: (index % 6) + 1, // 열 계산
+      },
+    }));
+  
+  // 각 bookSize에 따라 빈 배열 생성
+  const smallBooks = generateEmptyBooks(6, 1); // bookSize: 1인 6개 데이터
+  const mediumBooks = generateEmptyBooks(4, 2); // bookSize: 2인 4개 데이터
+  const largeBooks = generateEmptyBooks(2, 3); // bookSize: 3인 2개 데이터
 
   return (
-    <>
-      <Container>
-        <TitleWrapper>
-          <Typography variant="titleXxxSmall">{title}</Typography>
-          <StateIndicator state={currentstate} onClick={handleStateIndicatorClick}>
-            {currentstate ? "✓ 도서 확인 가능" : "X 도서 확인 불가"}
-          </StateIndicator>
-        </TitleWrapper>
+    <Container>
+      <TitleWrapper>
+        <Typography variant="titleXxxSmall">{title}</Typography>
+        <StateIndicator availability={currentstate} onClick={handleStateIndicatorClick}>
+          {currentstate ? "✓ 도서 확인 가능" : "X 도서 확인 불가"}
+        </StateIndicator>
+      </TitleWrapper>
 
-        <Line />
+      <Line />
 
-        <Details>
-          <Typography variant="captionDefault">
-            <DetailLabel>지은이: {author}</DetailLabel>
-          </Typography>
-          <Typography variant="captionDefault">
-            <DetailLabel>출판사: {publisher}</DetailLabel>
-            <DetailLabel>출판연도: {publishYear || "N/A"}</DetailLabel>
-          </Typography>
-          <Typography variant="captionDefault">
-            <DetailLabel>분류: {genre || "미분류"}</DetailLabel>
-            <DetailLabel>청구기호: {id}</DetailLabel>
-          </Typography>
-        </Details>
+      <Details>
+        <Typography variant="captionDefault">
+          <DetailLabel>지은이: {author}</DetailLabel>
+        </Typography>
+        <Typography variant="captionDefault">
+          <DetailLabel>출판사: {publisher}</DetailLabel>
+          <DetailLabel>출판연도: {publishYear || "N/A"}</DetailLabel>
+        </Typography>
+        <Typography variant="captionDefault">
+          <DetailLabel>분류: {genre || "미분류"}</DetailLabel>
+          <DetailLabel>청구기호: {id}</DetailLabel>
+        </Typography>
+      </Details>
 
-        <Line />
+      <Line />
 
-        <Button onClick={handleDetailClick}>도서 상세 페이지</Button>
-      </Container>
+      <Button onClick={() => handleDetailClick(id)}>도서 상세 페이지</Button>
 
-      {/* 모달 렌더링 */}
       {isModalOpen && (
         <ModalOverlay>
           <ModalContent>
-            <Typography variant="titleXSmall">도서 위치 정보</Typography>
+            <Typography variant="titleXSmall">도서 정보</Typography>
 
-            {/* Small Books Grid */}
-            <BookGrid columns={6}>
-              {smallBooks.map((book) => (
-                <BookBox key={book.id} available={book.available}>
-                  {book.bookLocation.row}.{book.bookLocation.column}
-                </BookBox>
+            <BookGrid columns={6}> 
+              {smallBooks.map((book, index) => ( 
+                <BookBox 
+                  key={book.id} 
+                  available={book.available} 
+                  highlighted={bookSize === 1 && index + 1 === location}
+                > 
+                  {book.bookLocation.row}.{book.bookLocation.column} 
+                </BookBox> 
+              ))} 
+            </BookGrid> 
+            
+            <BookGrid columns={4}> 
+              {mediumBooks.map((book, index) => ( 
+                <BookBox 
+                  key={book.id} 
+                  available={book.available} 
+                  highlighted={bookSize === 2 && index + 1 === location}
+                > 
+                  {book.bookLocation.row}.{book.bookLocation.column} 
+                </BookBox> 
               ))}
+            </BookGrid> 
+            
+            <BookGrid columns={2}> 
+              {largeBooks.map((book, index) => ( 
+                <BookBox 
+                  key={book.id} 
+                  available={book.available} 
+                  highlighted={bookSize === 3 && index + 1 === location}
+                > 
+                  {book.bookLocation.row}.{book.bookLocation.column} 
+                </BookBox> 
+              ))} 
             </BookGrid>
-
-            {/* Medium Books Grid */}
-            <BookGrid columns={4}>
-              {mediumBooks.map((book) => (
-                <BookBox key={book.id} available={book.available}>
-                  {book.bookLocation.row}.{book.bookLocation.column}
-                </BookBox>
-              ))}
-            </BookGrid>
-
-            {/* Large Books Grid */}
-            <BookGrid columns={2}>
-              {largeBooks.map((book) => (
-                <BookBox key={book.id} available={book.available}>
-                  {book.bookLocation.row}.{book.bookLocation.column}
-                </BookBox>
-              ))}
-            </BookGrid>
-
+            
             <CloseButton onClick={handleCloseModal}>닫기</CloseButton>
           </ModalContent>
         </ModalOverlay>
       )}
-    </>
+    </Container>
   );
 };
 
 export default CardInfo;
+
 
 // Styled Components
 const Container = styled.div`
@@ -146,7 +156,9 @@ const TitleWrapper = styled.div`
   width: 100%;
 `;
 
-const StateIndicator = styled.button<{ state?: boolean }>`
+const StateIndicator = styled.button.withConfig({
+  shouldForwardProp: (prop) => prop !== "availability",
+})<{ availability?: boolean }>`
   font-weight: bold;
   font-size: 14px;
   min-width: 136px;
@@ -154,7 +166,7 @@ const StateIndicator = styled.button<{ state?: boolean }>`
   border-radius: 100px;
   border: none;
   padding: 8px 16px;
-  color: ${({ state }) => (state ? "#0470D6" : "#D92124")};
+  color: ${({ availability }) => (availability ? "#0470D6" : "#D92124")};
 
   &:hover {
     background-color: #c3c3c3;
@@ -189,7 +201,7 @@ const Details = styled.div`
 `;
 
 const DetailLabel = styled.span`
-  font-weight: bold;
+  font-weight: semibold;
   margin-right: 40px;
 `;
 
@@ -220,13 +232,15 @@ const BookGrid = styled.div<{ columns: number }>`
   margin: 20px 0;
 `;
 
-const BookBox = styled.div<{ available: boolean }>`
+const BookBox = styled.div<{ available: boolean; highlighted?: boolean }>`
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100px;
-  background-color: ${({ available }) => (available ? "#1b8c76" : "#ddd")};
-  color: ${({ available }) => (available ? "white" : "black")};
+  background-color: ${({ available, highlighted }) =>
+    highlighted ? "#1b8c76" : available ? "#1b8c76" : "#ddd"};
+  color: ${({ available, highlighted }) =>
+    highlighted ? "black" : available ? "white" : "black"};
   border-radius: 5px;
   text-align: center;
   font-size: 12px;

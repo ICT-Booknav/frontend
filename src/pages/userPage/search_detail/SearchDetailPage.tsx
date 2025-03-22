@@ -79,6 +79,8 @@ const SearchDetailPage: React.FC = () => {
           publisher={book.publisher}
           genre={book.genre}
           id={book.id}
+          location={book.location}
+          bookSize={book.bookSize}
           currentstate={book.currentstate}
         />
       ))}
@@ -99,6 +101,7 @@ export default SearchDetailPage;
 
 const Container = styled.div`
   display: flex;
+  height: 100%;
   flex-direction: column;
   align-items: center;
   gap: 20px;
