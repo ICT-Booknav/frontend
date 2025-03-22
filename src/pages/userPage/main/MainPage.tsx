@@ -26,12 +26,12 @@ const Container = styled.div`
 `
 
 const Title = styled.div`
-  color: var(--5, #053643);
+  color: var(--5, #0D6364);
   text-align: center;
   font-family: Pretendard;
   font-size: 100px;
   font-style: normal;
-  font-weight: 600;
+  font-weight: 700;
   line-height: normal;
   margin-top: 120px;
   margin-bottom: -10px;
