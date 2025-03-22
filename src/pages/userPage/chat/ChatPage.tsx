@@ -9,14 +9,19 @@ import ChatbotIcon from '@assets/chatbot.png';
 
 const buttonTexts = ['상황에 맞는 책 추천', '학습에 맞는 책 추천', '키워드로 책 추천'];
 const questions = [
-  '가지고 있는 책 중에서 아무거나, 사용자에게 맞는 추천을 해줘.',
-  '키워드에 대한 공부법을 찾아줘',
-  '가지고 있는 책 중에서 키워드에 따라, 사용자에게 맞는 추천을 해줘.',
+  '내 상황에 맞춰서 가지고 있는 책의 위치를 같이 추천해줘.',
+  '내가 학습하고 싶은 키워드에 맞춰서 가지고 있는 책 중에서 추천해줘.',
+  '키워드에 맞춰서 가지고 있는 책 중에서 추천해줘.',
+];
+const answers = [
+  '상황에 대해 설명해주세요.',
+  '학습하고 싶은 부분에 대해 설명해주세요.',
+  '키워드를 제시해주세요.',
 ];
 
 const ChatPage: React.FC = () => {
   const [inputValue, setInputValue] = useState('');
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [chatRooms, setChatRooms] = useState<{ id: number; history: { question: string; answer: string }[] }[]>([]);
   const [currentRoomId, setCurrentRoomId] = useState<number | null>(null);
   const [pendingQuestion, setPendingQuestion] = useState<string | null>(null);
@@ -54,12 +59,19 @@ const ChatPage: React.FC = () => {
 
   const handleStartChat = (index: number) => {
     const question = questions[index];
+    const answer = answers[index];
 
     if (currentRoomId === null) {
       createNewChatRoom();
       setPendingQuestion(question);
+      setTimeout(() => {
+        updateChatHistory(answer);
+      }, 0);
     } else {
       addQuestionToHistory(question);
+      setTimeout(() => {
+        updateChatHistory(answer);
+      }, 0);
       // askQuestion(question);
     }
   };
@@ -68,7 +80,12 @@ const ChatPage: React.FC = () => {
     if (currentRoomId !== null) {
       setChatRooms((prevRooms) =>
         prevRooms.map((room) =>
-          room.id === currentRoomId ? { ...room, history: [...room.history, { question, answer: '' }] } : room
+          room.id === currentRoomId 
+            ? { 
+                ...room, 
+                history: [...room.history, { question, answer: '' }] 
+              }
+           : room
         )
       );
     }
