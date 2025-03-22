@@ -10,6 +10,7 @@ export interface BookProps {
         summary?: string; 
         tableOfContents?: string; 
         location?: number;
+        bookSize: number;
         currentstate?: boolean; 
     } []; 
 } 
@@ -26,7 +27,8 @@ export const BookLists: BookProps = {
         summary: "A Handbook of Agile Software Craftsmanship",
         tableOfContents: "Must Read for Developers",
         currentstate: true,
-        location: 1, 
+        location: 5, 
+        bookSize: 1, 
         coverImage: "https://example.com/clean-code.jpg",
       },
       {
@@ -39,6 +41,7 @@ export const BookLists: BookProps = {
         summary: "Your Journey to Mastery",
         tableOfContents: "Top Coding Books",
         currentstate: false,
+        bookSize: 3, 
         coverImage: "https://example.com/pragmatic-programmer.jpg",
       },
       {
@@ -52,6 +55,7 @@ export const BookLists: BookProps = {
         tableOfContents: "Software Design",
         currentstate: true,
         location: 3, 
+        bookSize: 2, 
         coverImage: "https://example.com/refactoring.jpg",
       },
       {
@@ -64,6 +68,7 @@ export const BookLists: BookProps = {
         summary: "Elements of Reusable Object-Oriented Software",
         tableOfContents: "Classic Books",
         currentstate: false,
+        bookSize: 3, 
       },
       {
         id: "5",
@@ -75,7 +80,8 @@ export const BookLists: BookProps = {
         summary: "Deep dive into JavaScript",
         tableOfContents: "JavaScript Essentials",
         currentstate: true,
-        location: 5, 
+        location: 3, 
+        bookSize: 2, 
       },
       {
         id: "6",
@@ -87,6 +93,7 @@ export const BookLists: BookProps = {
         summary: "Unearthing the Excellence in JavaScript",
         tableOfContents: "JavaScript Must Read",
         currentstate: false,
+        bookSize: 1, 
       },
       {
         id: "7",
@@ -98,7 +105,8 @@ export const BookLists: BookProps = {
         summary: "A Modern Introduction to Programming",
         tableOfContents: "Beginner Friendly",
         currentstate: true,
-        location: 7, 
+        location: 6, 
+        bookSize: 1, 
       },
       {
         id: "8",
@@ -110,6 +118,7 @@ export const BookLists: BookProps = {
         summary: "Essays on Software Engineering",
         tableOfContents: "Classic Reads",
         currentstate: false,
+        bookSize: 3, 
       },
       {
         id: "9",
@@ -121,7 +130,8 @@ export const BookLists: BookProps = {
         summary: "Refactoring and maintaining old codebases",
         tableOfContents: "Essential for Developers",
         currentstate: true,
-        location: 9, 
+        location: 4, 
+        bookSize: 2, 
       },
       {
         id: "10",
@@ -133,6 +143,7 @@ export const BookLists: BookProps = {
         summary: "A practical handbook of software construction",
         tableOfContents: "Best Practices",
         currentstate: false,
+        bookSize: 1, 
       },
       {
         id: "11",
@@ -144,7 +155,8 @@ export const BookLists: BookProps = {
         summary: "A fundamental work on algorithms and programming techniques",
         tableOfContents: "Advanced Books",
         currentstate: true,
-        location: 11, 
+        location: 2, 
+        bookSize: 3, 
       },
       {
         id: "12",
@@ -156,6 +168,7 @@ export const BookLists: BookProps = {
         summary: "A comprehensive introduction to computation theory",
         tableOfContents: "Theoretical CS",
         currentstate: false,
+        bookSize: 2, 
       },
       {
         id: "13",
@@ -167,7 +180,8 @@ export const BookLists: BookProps = {
         summary: "An in-depth introduction to deep learning techniques",
         tableOfContents: "AI & ML",
         currentstate: true,
-        location: 13, 
+        location: 3, 
+        bookSize: 2, 
       },
       {
         id: "14",
@@ -179,6 +193,7 @@ export const BookLists: BookProps = {
         summary: "A comprehensive textbook on AI",
         tableOfContents: "AI & ML",
         currentstate: false,
+        bookSize: 3, 
       },
       {
         id: "15",
@@ -190,7 +205,8 @@ export const BookLists: BookProps = {
         summary: "Understanding networking from a top-down perspective",
         tableOfContents: "Networking Books",
         currentstate: true,
-        location: 15, 
+        location: 3, 
+        bookSize: 1, 
       },
     ],
   };
