@@ -9,7 +9,7 @@ interface CardProps {
   publisher: string;
   genre?: string;
   id: string;
-  location?: number;
+  location: number[];
   bookSize: number;
   currentstate?: boolean;
   onClick?: React.MouseEventHandler<HTMLDivElement>;

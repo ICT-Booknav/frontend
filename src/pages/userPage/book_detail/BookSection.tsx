@@ -10,7 +10,7 @@ interface CardProps {
   publishYear: string;
   genre?: string;
   id: string;
-  location?: number;
+  location: number[];
   bookSize: number;
   currentstate?: boolean;
   onClick?: React.MouseEventHandler<HTMLDivElement>;
@@ -96,6 +96,7 @@ const CardContainer = styled.div`
   background-color: #ffffff;
   display: flex;
   width: 800px;
+  height: 280px;
   padding: 15px;
   align-items: center;
   gap: 37px;
@@ -111,7 +112,8 @@ const CardImageWrapper = styled.div`
 `;
 
 const CardImage = styled.img`
-  height: 160px;
+  height: 200px;
+  width: 160px;
   object-fit: cover;
   border-radius: 10px;
 `;

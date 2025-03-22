@@ -9,7 +9,7 @@ interface CardInfoProps {
   publishYear?: string;
   genre?: string;
   id: string;
-  location?: number;
+  location: number[];
   bookSize: number;
   currentstate?: boolean;
 }
@@ -54,7 +54,7 @@ const CardInfo: React.FC<CardInfoProps> = ({
   return (
     <Container>
       <TitleWrapper>
-        <Typography variant="titleXxxSmall">{title}</Typography>
+        <Typography variant="titleXxSmall">{title}</Typography>
         <StateIndicator availability={currentstate} onClick={handleStateIndicatorClick}>
           {currentstate ? "✓ 도서 확인 가능" : "X 도서 확인 불가"}
         </StateIndicator>
@@ -63,19 +63,19 @@ const CardInfo: React.FC<CardInfoProps> = ({
       <Line />
 
       <Details>
-        <Typography variant="captionDefault">
+        <Typography variant="bodyXSmall">
           <DetailLabel>지은이: {author}</DetailLabel>
         </Typography>
-        <Typography variant="captionDefault">
+        <Typography variant="bodyXSmall">
           <DetailLabel>출판사: {publisher}</DetailLabel>
         </Typography>
-        <Typography variant="captionDefault">
+        <Typography variant="bodyXSmall">
           <DetailLabel>출판연도: {publishYear || "N/A"}</DetailLabel>
         </Typography>
-        <Typography variant="captionDefault">
+        <Typography variant="bodyXSmall">
           <DetailLabel>분류: {genre || "미분류"}</DetailLabel>
         </Typography>
-        <Typography variant="captionDefault">
+        <Typography variant="bodyXSmall">
           <DetailLabel>청구기호: {id}</DetailLabel>
         </Typography>
       </Details>
@@ -92,7 +92,7 @@ const CardInfo: React.FC<CardInfoProps> = ({
                 <BookBox 
                   key={book.id} 
                   available={book.available} 
-                  highlighted={bookSize === 1 && index + 1 === location}
+                  highlighted={bookSize === 1 && location.includes(index + 1)}
                 > 
                   {book.bookLocation.row}.{book.bookLocation.column} 
                 </BookBox> 
@@ -104,7 +104,7 @@ const CardInfo: React.FC<CardInfoProps> = ({
                 <BookBox 
                   key={book.id} 
                   available={book.available} 
-                  highlighted={bookSize === 2 && index + 1 === location}
+                  highlighted={bookSize === 2 && location.includes(index + 1)}
                 > 
                   {book.bookLocation.row}.{book.bookLocation.column} 
                 </BookBox> 
@@ -116,7 +116,7 @@ const CardInfo: React.FC<CardInfoProps> = ({
                 <BookBox 
                   key={book.id} 
                   available={book.available} 
-                  highlighted={bookSize === 3 && index + 1 === location}
+                  highlighted={bookSize === 3 && location.includes(index + 1)}
                 > 
                   {book.bookLocation.row}.{book.bookLocation.column} 
                 </BookBox> 
@@ -137,9 +137,9 @@ export default CardInfo;
 const Container = styled.div`
   display: flex;
   flex-direction: column;
-  width: 60%;
+  width: 50%;
   padding: 6px;
-  gap: 10px;
+  gap: 16px;
   border: none;
   border-radius: 8px;
 `;
