@@ -98,7 +98,7 @@ const CardInfo: React.FC<CardInfoProps> = ({
                   available={book.available} 
                   highlighted={bookSize === 1 && location.includes(index + 1)}
                 > 
-                  {book.bookLocation.row}.{book.bookLocation.column} 
+                  S.{book.bookLocation.column} 
                 </BookBox> 
               ))} 
             </BookGrid> 
@@ -110,7 +110,7 @@ const CardInfo: React.FC<CardInfoProps> = ({
                   available={book.available} 
                   highlighted={bookSize === 2 && location.includes(index + 1)}
                 > 
-                  {book.bookLocation.row}.{book.bookLocation.column} 
+                  M.{book.bookLocation.column} 
                 </BookBox> 
               ))}
             </BookGrid> 
@@ -122,7 +122,7 @@ const CardInfo: React.FC<CardInfoProps> = ({
                   available={book.available} 
                   highlighted={bookSize === 3 && location.includes(index + 1)}
                 > 
-                  {book.bookLocation.row}.{book.bookLocation.column} 
+                  L.{book.bookLocation.column} 
                 </BookBox> 
               ))} 
             </BookGrid>
