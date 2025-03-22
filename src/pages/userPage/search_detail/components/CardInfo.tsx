@@ -60,7 +60,7 @@ const CardInfo: React.FC<CardInfoProps> = ({
         <TitleWrapper>
           <Typography variant="titleXxxSmall">{title}</Typography>
           <StateIndicator state={currentstate} onClick={handleStateIndicatorClick}>
-            {currentstate ? "✓ 도서 확인 가능" : "X 도서 확인 불가능"}
+            {currentstate ? "✓ 도서 확인 가능" : "X 도서 확인 불가"}
           </StateIndicator>
         </TitleWrapper>
 
@@ -69,8 +69,12 @@ const CardInfo: React.FC<CardInfoProps> = ({
         <Details>
           <Typography variant="captionDefault">
             <DetailLabel>지은이: {author}</DetailLabel>
+          </Typography>
+          <Typography variant="captionDefault">
             <DetailLabel>출판사: {publisher}</DetailLabel>
             <DetailLabel>출판연도: {publishYear || "N/A"}</DetailLabel>
+          </Typography>
+          <Typography variant="captionDefault">
             <DetailLabel>분류: {genre || "미분류"}</DetailLabel>
             <DetailLabel>청구기호: {id}</DetailLabel>
           </Typography>
@@ -130,7 +134,7 @@ const Container = styled.div`
   flex-direction: column;
   width: 60%;
   padding: 6px;
-  gap: 12px;
+  gap: 10px;
   border: none;
   border-radius: 8px;
 `;
@@ -145,6 +149,7 @@ const TitleWrapper = styled.div`
 const StateIndicator = styled.button<{ state?: boolean }>`
   font-weight: bold;
   font-size: 14px;
+  min-width: 136px;
   background-color: #e0e0e0;
   border-radius: 100px;
   border: none;
@@ -180,7 +185,7 @@ const Details = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 8px;
+  gap: 7px;
 `;
 
 const DetailLabel = styled.span`
