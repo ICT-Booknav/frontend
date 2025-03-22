@@ -1,30 +1,33 @@
 import { useState } from 'react';
 import styled from 'styled-components';
 import CardInfo from './CardInfo';
-import BookImg from "@assets/book.jpg";
 
 interface CardProps {
-  image: string;
+  coverImage?: string;
   title: string;
   author: string;
-  published: string;
-  date: string;
-  genre: string;
+  publisher: string;
+  publishYear: string;
+  genre?: string;
   id: string;
-  currentstate: boolean;
+  location?: number;
+  bookSize: number;
+  currentstate?: boolean;
   onClick?: React.MouseEventHandler<HTMLDivElement>;
 }
 
 const BookSection: React.FC<CardProps> = ({
-  image,
+  coverImage,
   title,
   author,
-  published,
-  date,
+  publisher,
+  publishYear,
   genre,
   id,
+  location,
+  bookSize,
   currentstate,
-  onClick
+  onClick,
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -46,15 +49,17 @@ const BookSection: React.FC<CardProps> = ({
     <>
       <CardContainer onClick={onClick}>
         <CardImageWrapper>
-          <CardImage src={image} alt={title} />
+          <CardImage src={coverImage} alt={title} />
         </CardImageWrapper>
         <CardInfo
           title={title}
           author={author}
-          published={published}
-          date={date}
+          publisher={publisher}
+          publishYear={publishYear}
           genre={genre}
           id={id}
+          location={location}
+          bookSize={bookSize}
           currentstate={currentstate}
         />
         <OutBook onClick={handleOutBookClick}>책 꺼내기</OutBook>
@@ -65,11 +70,11 @@ const BookSection: React.FC<CardProps> = ({
         <ModalOverlay>
           <ModalContent>
             <Book>
-              <img src={BookImg} alt="book"/>
+              <img src={coverImage} alt="book"/>
               <BookDetail>
                 <Title>{title}</Title>
                 <Author>지은이 | {author}</Author>
-                <Published>출판사 | {published}</Published>
+                <Published>출판사 | {publisher}</Published>
               </BookDetail>
             </Book>
             <ModalText>이 책이 맞습니까?</ModalText>

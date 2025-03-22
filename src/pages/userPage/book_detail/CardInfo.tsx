@@ -1,134 +1,133 @@
 import { useState } from "react";
 import styled from "styled-components";
 import Typography from "@components/Typography/typography";
-import { useNavigate } from "react-router-dom";
 
 interface CardInfoProps {
   title: string;
   author: string;
-  published: string;
-  date: string;
-  genre: string;
+  publisher: string;
+  publishYear?: string;
+  genre?: string;
   id: string;
-  currentstate: boolean;
+  location?: number;
+  bookSize: number;
+  currentstate?: boolean;
 }
 
 const CardInfo: React.FC<CardInfoProps> = ({
   title,
   author,
-  published,
-  date,
+  publisher,
+  publishYear,
   genre,
   id,
+  location,
+  bookSize, 
   currentstate,
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [bookLocations, setBookLocations] = useState<{ id: string; available: boolean; bookLocation: { row: number; column: number } }[]>([]);
-  const navigate = useNavigate(); // useNavigate 훅을 사용하여 페이지 이동 처리
-
-  const handleDetailClick = () => {
-    navigate(`/search/${id}`); // bookdetailpage로 이동
-  };
 
   const handleStateIndicatorClick = () => {
-    // 모달 열기
-    setIsModalOpen(true);
-    // API 호출 시뮬레이션: 책 위치 데이터 가져오기
-    const mockData = [
-      // Small Books
-      { id: "smallbook1", available: false, bookLocation: { row: 1, column: 1 } },
-      { id: "smallbook2", available: false, bookLocation: { row: 1, column: 2 } },
-      { id: "smallbook3", available: true, bookLocation: { row: 1, column: 3 } },
-      { id: "smallbook4", available: false, bookLocation: { row: 1, column: 4 } },
-      { id: "smallbook5", available: false, bookLocation: { row: 1, column: 5 } },
-      { id: "smallbook6", available: false, bookLocation: { row: 1, column: 6 } },
-    
-      // Medium Books
-      { id: "mediumbook1", available: false, bookLocation: { row: 2, column: 1 } },
-      { id: "mediumbook2", available: false, bookLocation: { row: 2, column: 2 } },
-      { id: "mediumbook3", available: false, bookLocation: { row: 2, column: 3 } },
-      { id: "mediumbook4", available: false, bookLocation: { row: 2, column: 4 } },
-    
-      // Large Books
-      { id: "largebook1", available: false, bookLocation: { row: 3, column: 1 } },
-      { id: "largebook2", available: false, bookLocation: { row: 3, column: 2 } },
-    ];    
-    setBookLocations(mockData);
+    setIsModalOpen(true); // 모달 열기
   };
 
   const handleCloseModal = () => {
     setIsModalOpen(false); // 모달 닫기
   };
 
-  const smallBooks = bookLocations.filter((book) => book.id.startsWith("smallbook"));
-  const mediumBooks = bookLocations.filter((book) => book.id.startsWith("mediumbook"));
-  const largeBooks = bookLocations.filter((book) => book.id.startsWith("largebook"));
+  const generateEmptyBooks = (count: number, bookSize: number) =>
+    Array.from({ length: count }, (_, index) => ({
+      id: `${bookSize}-${index + 1}`,
+      bookSize: bookSize,
+      available: false,
+      bookLocation: {
+        row: Math.floor(index / 6) + 1, // 행 계산
+        column: (index % 6) + 1, // 열 계산
+      },
+    }));
+  
+  // 각 bookSize에 따라 빈 배열 생성
+  const smallBooks = generateEmptyBooks(6, 1); // bookSize: 1인 6개 데이터
+  const mediumBooks = generateEmptyBooks(4, 2); // bookSize: 2인 4개 데이터
+  const largeBooks = generateEmptyBooks(2, 3); // bookSize: 3인 2개 데이터
 
   return (
-    <>
-      <Container>
-        <TitleWrapper>
-          <Typography variant="titleXxxSmall">{title}</Typography>
-          <StateIndicator state={currentstate} onClick={handleStateIndicatorClick}>
-            {currentstate ? "✓ 도서 확인 가능" : "X 도서 확인 불가능"}
-          </StateIndicator>
-        </TitleWrapper>
+    <Container>
+      <TitleWrapper>
+        <Typography variant="titleXxxSmall">{title}</Typography>
+        <StateIndicator availability={currentstate} onClick={handleStateIndicatorClick}>
+          {currentstate ? "✓ 도서 확인 가능" : "X 도서 확인 불가"}
+        </StateIndicator>
+      </TitleWrapper>
 
-        <Line />
+      <Line />
 
-        <Details>
-          <Typography variant="captionDefault">
-            <DetailLabel>지은이: {author}</DetailLabel>
-            <DetailLabel>출판사: {published}</DetailLabel>
-            <DetailLabel>출판연도: {date}</DetailLabel>
-            <DetailLabel>분류: {genre}</DetailLabel>
-            <DetailLabel>청구기호: {id}</DetailLabel>
-          </Typography>
-        </Details>
+      <Details>
+        <Typography variant="captionDefault">
+          <DetailLabel>지은이: {author}</DetailLabel>
+        </Typography>
+        <Typography variant="captionDefault">
+          <DetailLabel>출판사: {publisher}</DetailLabel>
+        </Typography>
+        <Typography variant="captionDefault">
+          <DetailLabel>출판연도: {publishYear || "N/A"}</DetailLabel>
+        </Typography>
+        <Typography variant="captionDefault">
+          <DetailLabel>분류: {genre || "미분류"}</DetailLabel>
+        </Typography>
+        <Typography variant="captionDefault">
+          <DetailLabel>청구기호: {id}</DetailLabel>
+        </Typography>
+      </Details>
 
-        <Line />
+      <Line />
 
-        <Button onClick={handleDetailClick}>도서 상세페이지</Button>
-      </Container>
-
-      {/* 모달 구현 */}
       {isModalOpen && (
         <ModalOverlay>
           <ModalContent>
-            <Typography variant="titleXSmall">도서 위치</Typography>
+            <Typography variant="titleXSmall">도서 정보</Typography>
+
+            <BookGrid columns={6}> 
+              {smallBooks.map((book, index) => ( 
+                <BookBox 
+                  key={book.id} 
+                  available={book.available} 
+                  highlighted={bookSize === 1 && index + 1 === location}
+                > 
+                  {book.bookLocation.row}.{book.bookLocation.column} 
+                </BookBox> 
+              ))} 
+            </BookGrid> 
             
-            {/* Small Books Grid */}
-            <BookGrid columns={6}>
-              {smallBooks.map((book) => (
-                <BookBox key={book.id} id={book.id} available={book.available}>
-                  {book.bookLocation.row}.{book.bookLocation.column}
-                </BookBox>
+            <BookGrid columns={4}> 
+              {mediumBooks.map((book, index) => ( 
+                <BookBox 
+                  key={book.id} 
+                  available={book.available} 
+                  highlighted={bookSize === 2 && index + 1 === location}
+                > 
+                  {book.bookLocation.row}.{book.bookLocation.column} 
+                </BookBox> 
               ))}
+            </BookGrid> 
+            
+            <BookGrid columns={2}> 
+              {largeBooks.map((book, index) => ( 
+                <BookBox 
+                  key={book.id} 
+                  available={book.available} 
+                  highlighted={bookSize === 3 && index + 1 === location}
+                > 
+                  {book.bookLocation.row}.{book.bookLocation.column} 
+                </BookBox> 
+              ))} 
             </BookGrid>
-
-            {/* Medium Books Grid */}
-            <BookGrid columns={4}>
-              {mediumBooks.map((book) => (
-                <BookBox key={book.id} id={book.id} available={book.available}>
-                  {book.bookLocation.row}.{book.bookLocation.column}
-                </BookBox>
-              ))}
-            </BookGrid>
-
-            {/* Large Books Grid */}
-            <BookGrid columns={2}>
-              {largeBooks.map((book) => (
-                <BookBox key={book.id} id={book.id} available={book.available}>
-                  {book.bookLocation.row}.{book.bookLocation.column}
-                </BookBox>
-              ))}
-            </BookGrid>
-
+            
             <CloseButton onClick={handleCloseModal}>닫기</CloseButton>
           </ModalContent>
         </ModalOverlay>
       )}
-    </>
+    </Container>
   );
 };
 
@@ -140,62 +139,53 @@ const Container = styled.div`
   flex-direction: column;
   width: 60%;
   padding: 6px;
-  gap: 12px;
+  gap: 10px;
   border: none;
   border-radius: 8px;
-`
+`;
 
 const TitleWrapper = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
   width: 100%;
-`
+`;
 
-const StateIndicator = styled.button<{ state: boolean }>`
+const StateIndicator = styled.button.withConfig({
+  shouldForwardProp: (prop) => prop !== "availability",
+})<{ availability?: boolean }>`
   font-weight: bold;
   font-size: 14px;
+  min-width: 136px;
   background-color: #e0e0e0;
   border-radius: 100px;
   border: none;
   padding: 8px 16px;
-  color: ${({ state }) => (state ? "#0470D6" : "#D92124")};
+  color: ${({ availability }) => (availability ? "#0470D6" : "#D92124")};
+
   &:hover {
     background-color: #c3c3c3;
   }
   cursor: pointer;
-`
-
-const Button = styled.button`
-  background-color: #1b8c76;
-  color: white;
-  border: none;
-  border-radius: 100px;
-  padding: 8px 16px;
-  cursor: pointer;
-
-  &:hover {
-    background-color: #157a63;
-  }
-`
+`;
 
 const Line = styled.div`
   width: 100%;
   height: 1px;
   background-color: #ddd;
-`
+`;
 
 const Details = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 8px;
-`
+  gap: 7px;
+`;
 
 const DetailLabel = styled.span`
-  font-weight: bold;
+  font-weight: semibold;
   margin-right: 40px;
-`
+`;
 
 const ModalOverlay = styled.div`
   position: fixed;
@@ -207,7 +197,7 @@ const ModalOverlay = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-`
+`;
 
 const ModalContent = styled.div`
   background: white;
@@ -216,34 +206,28 @@ const ModalContent = styled.div`
   text-align: center;
   width: 430px;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-`
+`;
 
 const BookGrid = styled.div<{ columns: number }>`
   display: grid;
   grid-template-columns: ${({ columns }) => `repeat(${columns}, 1fr)`};
   margin: 20px 0;
-`
+`;
 
-const BookBox = styled.div<{ id: string; available: boolean }>`
+const BookBox = styled.div<{ available: boolean; highlighted?: boolean }>`
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100px;
-  width: ${({ id }) =>
-    id && id.startsWith("smallbook")
-      ? "60px"
-      : id && id.startsWith("mediumbook")
-      ? "90px"
-      : id && id.startsWith("largebook")
-      ? "190px"
-      : "100px"};
-  background-color: ${({ available }) => (available ? "#1b8c76" : "#ddd")};
-  color: ${({ available }) => (available ? "white" : "black")};
+  background-color: ${({ available, highlighted }) =>
+    highlighted ? "#1b8c76" : available ? "#1b8c76" : "#ddd"};
+  color: ${({ available, highlighted }) =>
+    highlighted ? "black" : available ? "white" : "black"};
   border-radius: 5px;
   text-align: center;
   font-size: 12px;
   font-weight: bold;
-`
+`;
 
 const CloseButton = styled.button`
   padding: 10px 20px;
@@ -257,4 +241,5 @@ const CloseButton = styled.button`
   &:hover {
     background-color: #b81c1d;
   }
-`
+`;
+

@@ -1,36 +1,43 @@
 import { styled } from "styled-components";
 import BookSection from "./BookSection";
-import BookImg from "@assets/book.jpg";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import { BookLists } from "@assets/dummydata/dummybook";
 
 const BookDetailPage: React.FC = () => {
-  const books = Array(5)
-    .fill(null)
-    .map((_, index) => ({
-      image: BookImg,
-      title: `책 제목 ${page}-${index + 1}`,
-      author: "작가",
-      published: "출판사",
-      date: "출판년도",
-      genre: "분류",
-      id: `청구기호-${page}-${index + 1}`,
-      currentstate: Math.random() > 0.5, // 랜덤 상태
-    }));
 
+  const { id: bookId } = useParams<{ id: string }>();
+  const [book, setBook] = useState<any | null>(null); // 선택된 도서 상태
+
+  useEffect(() => {
+    if (!bookId) {
+      console.error("ID가 제공되지 않았습니다.");
+      return;
+    }
+
+    const selectedBook = BookLists.books.find((b) => b.id === String(bookId));
+    setBook(selectedBook || null); // 도서 데이터 설정
+  }, [bookId]);
+  
   return (
     <Container>
-      {books.map((book, index) => (
+      {book ? (
         <BookSection
-          key={index}
-          image={book.image}
+          coverImage={book.coverImage || "@assets/book.jpg"}
           title={book.title}
           author={book.author}
-          published={book.published}
-          date={book.date}
+          publisher={book.publisher}
+          publishYear={book.publishYear}
           genre={book.genre}
           id={book.id}
+          location={book.location}
+          bookSize={book.bookSize}
           currentstate={book.currentstate}
         />
-      ))}
+      ) : (
+        // 로딩 중 또는 도서를 찾을 수 없을 때 메시지
+        <p>도서 정보를 불러오는 중입니다...</p>
+      )}
     </Container>
   );
 };
@@ -42,4 +49,5 @@ const Container = styled.div`
   flex-direction: column;
   align-items: center;
   gap: 20px;
+  margin-top: 30px;
 `;
