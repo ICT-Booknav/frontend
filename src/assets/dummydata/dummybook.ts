@@ -9,7 +9,7 @@ export interface BookProps {
         id: string; 
         summary?: string; 
         tableOfContents?: string; 
-        location?: number;
+        location?: number[];
         bookSize: number;
         currentstate?: boolean; 
     } []; 
@@ -25,9 +25,9 @@ export const BookLists: BookProps = {
         publishYear: "2008-08-01",
         genre: "Programming",
         summary: "A Handbook of Agile Software Craftsmanship",
-        tableOfContents: "Must Read for Developers",
+        tableOfContents: "Must Read for Developers Must Read for DevelopersMust Read for DevelopersMust Read for DevelopersMust Read for DevelopersMust Read for DevelopersMust Read for DevelopersMust Read for DevelopersMust Read for DevelopersMust Read for DevelopersMust Read for DevelopersMust Read for DevelopersMust Read for DevelopersMust Read for DevelopersMust Read for DevelopersMust Read for DevelopersMust Read for DevelopersMust Read for DevelopersMust Read for DevelopersMust Read for DevelopersMust Read for DevelopersMust Read for DevelopersMust Read for DevelopersMust Read for DevelopersMust Read for DevelopersMust Read for DevelopersMust Read for DevelopersMust Read for DevelopersMust Read for DevelopersMust Read for DevelopersMust Read for DevelopersMust Read for DevelopersMust Read for DevelopersMust Read for DevelopersMust Read for DevelopersMust Read for DevelopersMust Read for DevelopersMust Read for DevelopersMust Read for DevelopersMust Read for DevelopersMust Read for DevelopersMust Read for Developers Must Read for DevelopersMust Read for DevelopersMust Read for DevelopersMust Read for DevelopersMust Read for DevelopersMust Read for DevelopersMust Read for DevelopersMust Read for DevelopersMust Read for DevelopersMust Read for DevelopersMust Read for DevelopersMust Read for DevelopersMust Read for DevelopersMust Read for DevelopersMust Read for DevelopersMust Read for DevelopersMust Read for DevelopersMust ",
         currentstate: true,
-        location: 5, 
+        location: [5, 1], 
         bookSize: 1, 
         coverImage: "https://example.com/clean-code.jpg",
       },
@@ -54,7 +54,7 @@ export const BookLists: BookProps = {
         summary: "Improving the Design of Existing Code",
         tableOfContents: "Software Design",
         currentstate: true,
-        location: 3, 
+        location: [3], 
         bookSize: 2, 
         coverImage: "https://example.com/refactoring.jpg",
       },
@@ -80,7 +80,7 @@ export const BookLists: BookProps = {
         summary: "Deep dive into JavaScript",
         tableOfContents: "JavaScript Essentials",
         currentstate: true,
-        location: 3, 
+        location: [3], 
         bookSize: 2, 
       },
       {
@@ -105,7 +105,7 @@ export const BookLists: BookProps = {
         summary: "A Modern Introduction to Programming",
         tableOfContents: "Beginner Friendly",
         currentstate: true,
-        location: 6, 
+        location: [6], 
         bookSize: 1, 
       },
       {
@@ -130,7 +130,7 @@ export const BookLists: BookProps = {
         summary: "Refactoring and maintaining old codebases",
         tableOfContents: "Essential for Developers",
         currentstate: true,
-        location: 4, 
+        location: [4], 
         bookSize: 2, 
       },
       {
@@ -155,7 +155,7 @@ export const BookLists: BookProps = {
         summary: "A fundamental work on algorithms and programming techniques",
         tableOfContents: "Advanced Books",
         currentstate: true,
-        location: 2, 
+        location: [2], 
         bookSize: 3, 
       },
       {
@@ -180,7 +180,7 @@ export const BookLists: BookProps = {
         summary: "An in-depth introduction to deep learning techniques",
         tableOfContents: "AI & ML",
         currentstate: true,
-        location: 3, 
+        location: [3], 
         bookSize: 2, 
       },
       {
@@ -205,7 +205,7 @@ export const BookLists: BookProps = {
         summary: "Understanding networking from a top-down perspective",
         tableOfContents: "Networking Books",
         currentstate: true,
-        location: 3, 
+        location: [3], 
         bookSize: 1, 
       },
     ],
