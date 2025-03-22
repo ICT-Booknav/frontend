@@ -6,9 +6,8 @@ import { BookLists } from "@assets/dummydata/dummybook";
 const RecommendList: React.FC = () => {
   const navigate = useNavigate();
 
-  const handleBookClick = (id: string) => {
-    console.log(`Book clicked: ${id}`);
-    navigate(`/search/${id}`);
+  const handleBookClick = (title: string) => {
+    navigate(`/search/${encodeURIComponent(title)}`);
   };
 
   return (
@@ -18,7 +17,7 @@ const RecommendList: React.FC = () => {
         <SimpleBook
           key={book.id}
           book={book}
-          onClick={() => handleBookClick(book.id)}
+          onClick={() => handleBookClick(book.title)}
         />
       ))}
     </Container>
