@@ -3,21 +3,23 @@ import BookSection from "./BookSection";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { BookLists } from "@assets/dummydata/dummybook";
+import Skeleton from "../search_detail/components/Skeleton";
 
 const BookDetailPage: React.FC = () => {
 
-  const { id: bookId } = useParams<{ id: string }>();
+  const { title } = useParams<{ title: string }>(); // 경로에서 title 추출
+  const decodedTitle = decodeURIComponent(title || ""); // 디코딩
   const [book, setBook] = useState<any | null>(null); // 선택된 도서 상태
 
   useEffect(() => {
-    if (!bookId) {
-      console.error("ID가 제공되지 않았습니다.");
+    if (!decodedTitle) {
+      console.error("정보가 제공되지 않았습니다.");
       return;
     }
 
-    const selectedBook = BookLists.books.find((b) => b.id === String(bookId));
+    const selectedBook = BookLists.books.find((b) => b.title === String(decodedTitle));
     setBook(selectedBook || null); // 도서 데이터 설정
-  }, [bookId]);
+  }, [decodedTitle]);
   
   return (
     <Container>
@@ -36,8 +38,22 @@ const BookDetailPage: React.FC = () => {
         />
       ) : (
         // 로딩 중 또는 도서를 찾을 수 없을 때 메시지
-        <p>도서 정보를 불러오는 중입니다...</p>
+        <>
+          <Skeleton />
+        </>
       )}
+
+      <BookDetail>
+        <Title>책 소개</Title>
+        <Line />
+        <Content>{book?.summary || "요약 정보가 없습니다."}</Content>
+      </BookDetail>
+      <BookDetail>
+        <Title>책 목차</Title>
+        <Line />
+        <Content>{book?.tableOfContents || "목차 정보가 없습니다."}</Content>
+      </BookDetail>
+
     </Container>
   );
 };
@@ -49,5 +65,47 @@ const Container = styled.div`
   flex-direction: column;
   align-items: center;
   gap: 20px;
-  margin-top: 30px;
-`;
+  margin: 30px;
+`
+
+const BookDetail = styled.div`
+  background-color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 800px;
+  padding: 15px;
+  gap: 13px;
+  border-radius: 30px;
+  border: none;
+  outline: 0.5px solid #000;
+  box-shadow: 8px 8px 4px 0px rgba(0, 0, 0, 0.25);
+`
+
+const Line = styled.div`
+  width: 100%;
+  height: 1px;
+  background-color: #ddd;
+`
+
+const Title = styled.div`
+  color: var(--Text-black, #121212);
+  text-align: left;
+  font-family: Pretendard;
+  font-size: 21px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  letter-spacing: -0.36px;
+`
+
+const Content = styled.div`
+  color: var(--Text-black, #121212);
+  text-align: left;
+  font-family: Pretendard;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  letter-spacing: -0.3px;
+`

@@ -10,7 +10,7 @@ interface CardInfoProps {
   publishYear?: string;
   genre?: string;
   id: string;
-  location?: number;
+  location: number[];
   bookSize: number;
   currentstate?: boolean;
 }
@@ -29,8 +29,8 @@ const CardInfo: React.FC<CardInfoProps> = ({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
 
-  const handleDetailClick = (id: string) => {
-    navigate(`/search/${id}`); // 상세 페이지 이동
+  const handleDetailClick = (title: string) => {
+    navigate(`/search/${encodeURIComponent(title)}`); // 상세 페이지 이동
   };
 
   const handleStateIndicatorClick = () => {
@@ -84,7 +84,7 @@ const CardInfo: React.FC<CardInfoProps> = ({
 
       <Line />
 
-      <Button onClick={() => handleDetailClick(id)}>도서 상세 페이지</Button>
+      <Button onClick={() => handleDetailClick(title)}>도서 상세 페이지</Button>
 
       {isModalOpen && (
         <ModalOverlay>
@@ -96,7 +96,7 @@ const CardInfo: React.FC<CardInfoProps> = ({
                 <BookBox 
                   key={book.id} 
                   available={book.available} 
-                  highlighted={bookSize === 1 && index + 1 === location}
+                  highlighted={bookSize === 1 && location.includes(index + 1)}
                 > 
                   {book.bookLocation.row}.{book.bookLocation.column} 
                 </BookBox> 
@@ -108,7 +108,7 @@ const CardInfo: React.FC<CardInfoProps> = ({
                 <BookBox 
                   key={book.id} 
                   available={book.available} 
-                  highlighted={bookSize === 2 && index + 1 === location}
+                  highlighted={bookSize === 2 && location.includes(index + 1)}
                 > 
                   {book.bookLocation.row}.{book.bookLocation.column} 
                 </BookBox> 
@@ -120,7 +120,7 @@ const CardInfo: React.FC<CardInfoProps> = ({
                 <BookBox 
                   key={book.id} 
                   available={book.available} 
-                  highlighted={bookSize === 3 && index + 1 === location}
+                  highlighted={bookSize === 3 && location.includes(index + 1)}
                 > 
                   {book.bookLocation.row}.{book.bookLocation.column} 
                 </BookBox> 
