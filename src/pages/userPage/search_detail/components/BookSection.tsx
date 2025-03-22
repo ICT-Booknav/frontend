@@ -103,6 +103,7 @@ const CardImageWrapper = styled.div`
 
 const CardImage = styled.img`
   height: 160px;
+  width: 120px;
   object-fit: cover;
   border-radius: 10px;
 `;
