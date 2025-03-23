@@ -11,6 +11,9 @@ const NavigationBar: React.FC = () => {
   return (
     <Container>
       <Nav>
+        <StyledNavLink to={RoutePaths.MAIN} onClick={handleNavClick}>
+          Main으로 돌아가기
+        </StyledNavLink>
         <Typography variant="titleXxSmall">
           <MenuItems>
             <StyledNavLink to={RoutePaths.SEARCH} onClick={handleNavClick}>
@@ -21,6 +24,7 @@ const NavigationBar: React.FC = () => {
             </StyledNavLink>
           </MenuItems>
         </Typography>
+        <Profile />
       </Nav>
     </Container>
   );
@@ -82,5 +86,13 @@ const StyledNavLink = styled(NavLink)<{ isSearch?: boolean }>`
   &.active::after {
     transform: scaleX(1);
   }
-`;
+`
 
+const Profile = styled.div`
+  width: 40px;
+  height: 40px;
+  border-radius: 30px;
+  background: lightgray;
+  cursor: pointer;
+  margin-left: 50px;
+`
