@@ -1,6 +1,6 @@
-import { useState } from 'react';
-import styled from 'styled-components';
-import CardInfo from './CardInfo';
+import { useState } from "react";
+import styled from "styled-components";
+import CardInfo from "./CardInfo";
 
 interface CardProps {
   coverImage?: string;
@@ -27,7 +27,8 @@ const BookSection: React.FC<CardProps> = ({
   currentstate,
   onClick,
 }) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false); // 모달 상태 관리
+  const [loading, setLoading] = useState(false); // 로딩 상태 관리
 
   const handleOutBookClick = () => {
     setIsModalOpen(true); // 모달 열기
@@ -37,10 +38,33 @@ const BookSection: React.FC<CardProps> = ({
     setIsModalOpen(false); // 모달 닫기
   };
 
-  const handleConfirm = () => {
-    // 알림 확인 이후 동작
-    alert("주문하신 책 나왔습니다.");
-    setIsModalOpen(false); // 모달 닫기
+  const handleConfirm = async () => {
+    // API 호출
+    try {
+      setLoading(true); // 로딩 시작
+      const response = await fetch(
+        `http://localhost:3003/api/search/${encodeURIComponent(title)}/selectBook/${encodeURIComponent(title)}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (response.ok) {
+        alert("주문하신 책이 성공적으로 선택되었습니다.");
+      } else {
+        const errorData = await response.json();
+        alert(`오류 발생: ${errorData.error}`);
+      }
+    } catch (error) {
+      console.error("API 호출 에러:", error);
+      alert("서버와 통신 중 문제가 발생했습니다.");
+    } finally {
+      setLoading(false); // 로딩 종료
+      setIsModalOpen(false); // 모달 닫기
+    }
   };
 
   return (
@@ -76,8 +100,12 @@ const BookSection: React.FC<CardProps> = ({
             </Book>
             <ModalText>이 책이 맞습니까?</ModalText>
             <ButtonContainer>
-              <ModalButton onClick={handleConfirm}>예</ModalButton>
-              <ModalButton onClick={handleCloseModal}>아니요</ModalButton>
+              <ModalButton onClick={handleConfirm} disabled={loading}>
+                {loading ? "처리 중..." : "예"}
+              </ModalButton>
+              <ModalButton onClick={handleCloseModal} disabled={loading}>
+                아니요
+              </ModalButton>
             </ButtonContainer>
           </ModalContent>
         </ModalOverlay>
@@ -227,14 +255,12 @@ const Title = styled.div`
 
 const Author = styled.div`
   color: var(--Text-black, #121212);
-  text-align: center;
   font-family: Pretendard;
   font-size: 11px;
 `;
 
 const Published = styled.div`
   color: var(--Text-black, #121212);
-  text-align: center;
   font-family: Pretendard;
   font-size: 11px;
 `;
