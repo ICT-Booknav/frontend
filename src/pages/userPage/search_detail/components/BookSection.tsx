@@ -7,11 +7,12 @@ interface CardProps {
   title: string;
   author: string;
   publisher: string;
+  publishYear: string;
   genre?: string;
   id: string;
   location: number[];
   bookSize: number;
-  currentstate?: boolean;
+  currentState?: boolean;
   onClick?: React.MouseEventHandler<HTMLDivElement>;
 }
 
@@ -20,11 +21,12 @@ const BookSection: React.FC<CardProps> = ({
   title,
   author,
   publisher,
+  publishYear,
   genre,
   id,
   location,
   bookSize,
-  currentstate,
+  currentState,
   onClick,
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false); // 모달 상태 관리
@@ -39,33 +41,29 @@ const BookSection: React.FC<CardProps> = ({
   };
 
   const handleConfirm = async () => {
-    // API 호출
     try {
-      setLoading(true); // 로딩 시작
-      const response = await fetch(
-        `http://localhost:3003/api/search/${encodeURIComponent(title)}/selectBook/${encodeURIComponent(title)}`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
+        setLoading(true); // 로딩 시작
+        const url = `http://localhost:3003/api/search/search/${title}`;
+        const response = await fetch(url, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+        console.log("야대답해라", response);
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
         }
-      );
 
-      if (response.ok) {
-        alert("주문하신 책이 성공적으로 선택되었습니다.");
-      } else {
-        const errorData = await response.json();
-        alert(`오류 발생: ${errorData.error}`);
-      }
+        const data = await response.json();
+        console.log(data);
     } catch (error) {
-      console.error("API 호출 에러:", error);
-      alert("서버와 통신 중 문제가 발생했습니다.");
+        console.error('Error:', error);
     } finally {
-      setLoading(false); // 로딩 종료
-      setIsModalOpen(false); // 모달 닫기
+        setLoading(false); // 로딩 종료
+        setIsModalOpen(false); // 모달 닫기
     }
-  };
+};
 
   return (
     <>
@@ -77,11 +75,12 @@ const BookSection: React.FC<CardProps> = ({
           title={title}
           author={author}
           publisher={publisher}
+          publishYear={publishYear || "정보 없음"}
           genre={genre}
           id={id}
           location={location}
           bookSize={bookSize}
-          currentstate={currentstate}
+          currentState={currentState}
         />
         <OutBook onClick={handleOutBookClick}>책 꺼내기</OutBook>
       </CardContainer>
