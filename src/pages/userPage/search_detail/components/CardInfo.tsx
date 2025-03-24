@@ -12,7 +12,7 @@ interface CardInfoProps {
   id: string;
   location: number[];
   bookSize: number;
-  currentstate?: boolean;
+  currentState?: boolean;
 }
 
 const CardInfo: React.FC<CardInfoProps> = ({
@@ -24,7 +24,7 @@ const CardInfo: React.FC<CardInfoProps> = ({
   id,
   location,
   bookSize, 
-  currentstate,
+  currentState,
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
@@ -61,8 +61,8 @@ const CardInfo: React.FC<CardInfoProps> = ({
     <Container>
       <TitleWrapper>
         <Typography variant="titleXxxSmall">{title}</Typography>
-        <StateIndicator availability={currentstate} onClick={handleStateIndicatorClick}>
-          {currentstate ? "✓ 도서 확인 가능" : "X 도서 확인 불가"}
+        <StateIndicator availability={currentState} onClick={handleStateIndicatorClick}>
+          {currentState ? "✓ 도서 확인 가능" : "X 도서 확인 불가"}
         </StateIndicator>
       </TitleWrapper>
 

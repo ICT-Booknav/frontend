@@ -33,6 +33,8 @@ const BookDetailPage: React.FC = () => {
       }
       console.log(book?.title);
     };
+    console.log("dkddkkdkd");
+
     
     console.log(book);
     loadBookDetail(); // 데이터 로드
@@ -55,7 +57,7 @@ const BookDetailPage: React.FC = () => {
             id={book?.id || "정보 없음"}
             location={book?.location || [0, 0]}
             bookSize={book?.bookSize || 0}
-            currentstate={book?.currentstate || false}
+            currentState={book?.currentState || false}
           />
 
           {/* 책 소개 */}

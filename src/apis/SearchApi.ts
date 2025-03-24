@@ -13,7 +13,7 @@ export interface books {
     tableOfContents?: string; 
     location?: number[];
     bookSize: number;
-    currentstate?: boolean; 
+    currentState?: boolean; 
 }
 
 /**
