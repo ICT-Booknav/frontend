@@ -1,6 +1,6 @@
-import { useState } from 'react';
-import styled from 'styled-components';
-import CardInfo from './CardInfo';
+import { useState } from "react";
+import styled from "styled-components";
+import CardInfo from "./CardInfo";
 
 interface CardProps {
   coverImage?: string;
@@ -29,7 +29,8 @@ const BookSection: React.FC<CardProps> = ({
   currentstate,
   onClick,
 }) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false); // 모달 상태
+  const [loading, setLoading] = useState(false); // API 호출 상태
 
   const handleOutBookClick = () => {
     setIsModalOpen(true); // 모달 열기
@@ -39,10 +40,35 @@ const BookSection: React.FC<CardProps> = ({
     setIsModalOpen(false); // 모달 닫기
   };
 
-  const handleConfirm = () => {
-    // 알림 확인 이후 동작
-    alert("주문하신 책 나왔습니다.");
-    setIsModalOpen(false); // 모달 닫기
+  const handleConfirm = async () => {
+    // API 호출 로직
+    try {
+      setLoading(true); // 로딩 시작
+      const response = await fetch(
+        `http://localhost:3003/api/search/${encodeURIComponent(
+          title
+        )}/selectBook/${encodeURIComponent(title)}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (response.ok) {
+        alert("책 선택 완료: 주문하신 책을 꺼내옵니다.");
+      } else {
+        const errorData = await response.json();
+        alert(`오류 발생: ${errorData.error}`);
+      }
+    } catch (error) {
+      console.error("API 호출 중 에러 발생:", error);
+      alert("서버와 통신 중 문제가 발생했습니다.");
+    } finally {
+      setIsModalOpen(false); // 모달 닫기
+      setLoading(false); // 로딩 종료
+    }
   };
 
   return (
@@ -70,7 +96,7 @@ const BookSection: React.FC<CardProps> = ({
         <ModalOverlay>
           <ModalContent>
             <Book>
-              <img src={coverImage} alt="book"/>
+              <img src={coverImage} alt="book" />
               <BookDetail>
                 <Title>{title}</Title>
                 <Author>지은이 | {author}</Author>
@@ -79,8 +105,12 @@ const BookSection: React.FC<CardProps> = ({
             </Book>
             <ModalText>이 책이 맞습니까?</ModalText>
             <ButtonContainer>
-              <ModalButton onClick={handleConfirm}>예</ModalButton>
-              <ModalButton onClick={handleCloseModal}>아니요</ModalButton>
+              <ModalButton onClick={handleConfirm} disabled={loading}>
+                {loading ? "처리 중..." : "예"}
+              </ModalButton>
+              <ModalButton onClick={handleCloseModal} disabled={loading}>
+                아니요
+              </ModalButton>
             </ButtonContainer>
           </ModalContent>
         </ModalOverlay>
@@ -192,7 +222,7 @@ const ModalButton = styled.button`
       background-color: #b81c1d;
     }
   }
-`
+`;
 
 const Book = styled.div`
   display: flex;
@@ -207,11 +237,11 @@ const Book = styled.div`
   cursor: pointer;
 
   img {
-    height: 210px; /* 고정된 높이 */
-    object-fit: cover; /* 비율을 유지하면서 이미지 영역 채움 */
-    border-radius: 10px; /* 이미지를 살짝 둥글게 */
+    height: 210px;
+    object-fit: cover;
+    border-radius: 10px;
   }
-`
+`;
 
 const BookDetail = styled.div`
   display: flex;
@@ -220,36 +250,25 @@ const BookDetail = styled.div`
   justify-content: center;
   align-items: center;
   gap: 7px;
-`
+`;
 
 const Title = styled.div`
   color: var(--Text-black, #121212);
   font-family: Pretendard;
   font-size: 14px;
-  font-style: normal;
   font-weight: 500;
-  line-height: normal;
-  letter-spacing: -0.36px;
-`
+`;
 
 const Author = styled.div`
   color: var(--Text-black, #121212);
-  text-align: center;
   font-family: Pretendard;
   font-size: 11px;
-  font-style: normal;
   font-weight: 400;
-  line-height: normal;
-  letter-spacing: -0.3px;
-`
+`;
 
 const Published = styled.div`
   color: var(--Text-black, #121212);
-  text-align: center;
   font-family: Pretendard;
   font-size: 11px;
-  font-style: normal;
   font-weight: 400;
-  line-height: normal;
-  letter-spacing: -0.3px;
-`
+`;
