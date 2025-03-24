@@ -45,6 +45,8 @@ const SearchDetailPage: React.FC = () => {
     setBookList([]); // 기존 데이터 초기화
   };
 
+  console.log("책내놔", bookList[0]);
+
   return (
     <Container>
       <Title>
@@ -63,15 +65,16 @@ const SearchDetailPage: React.FC = () => {
         bookList.map((book, index) => (
           <BookSection
             key={index}
-            coverImage={book.coverImage || "@assets/book.jpg"}
-            title={book.title}
-            author={book.author}
-            publisher={book.publisher}
-            genre={book.genre}
-            id={book.id}
-            location={book.location || [0, 0]} // location이 없을 경우 기본값 설정
-            bookSize={book.bookSize}
-            currentstate={book.currentstate || true} // currentstate 없을 경우 기본값 설정
+            coverImage={book?.coverImage || "@assets/book.jpg"}
+            title={book?.title || "제목 없음"}
+            author={book?.author || "저자 없음"}
+            publisher={book?.publisher || "출판사 없음"}
+            publishYear={book?.publishYear || "정보 없음"}
+            genre={book?.genre || "장르 없음"}
+            id={book?.id || "정보 없음"}
+            location={book?.location || [0, 0]}
+            bookSize={book?.bookSize || 0}
+            currentState={book?.currentState || false}
           />
         ))
       )}
