@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { styled } from "styled-components";
 import Sidebar from "./components/sidebar";
 import { dummyShelves } from "@assets/dummydata/dummyadmin";
@@ -30,10 +30,38 @@ const AdminPage: React.FC = () => {
       bookSize,
       available: false,
       bookLocation: {
-        row: dummyShelves[index+1].shelfId,
+        row,
         column: (index % 6) + 1,
       },
     }));
+
+    const mapDummyShelvesToRows = () => {
+      const updatedShelves: Shelves = [[], [], []]; // 초기 빈 행 배열
+  
+      dummyShelves.forEach((dummy) => {
+        const { shelfId, row, column, bookId, size } = dummy;
+  
+        // shelfId를 기반으로 해당 책장(rowIndex)에 책 추가
+        const book: Book = {
+          id: bookId || `${size}-${row}-${column}`,
+          bookSize: size,
+          available: !!bookId,
+          bookLocation: {
+            row: shelfId, // shelfId와 연결된 row
+            column,
+          },
+        };
+  
+        updatedShelves[shelfId - 1].push(book); // shelfId가 1부터 시작한다고 가정
+      });
+  
+      setShelves(updatedShelves);
+    };
+
+    useEffect(() => {
+      // 컴포넌트가 마운트될 때 `mapDummyShelvesToRows` 호출
+      mapDummyShelvesToRows();
+    }, []);
 
   const renderBooks = (rowBooks: RowOfBooks, sizeLabel: SizeLabel) => (
     <BookGrid columns={rowBooks.length}>
