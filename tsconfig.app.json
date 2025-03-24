@@ -1,0 +1,43 @@
+{
+    "compilerOptions": {
+      "composite": true,
+      "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+      "target": "ES2020",
+      "useDefineForClassFields": true,
+      "lib": ["ES2020", "DOM", "DOM.Iterable"],
+      "module": "ESNext",
+      "skipLibCheck": true,
+      /* 절대 경로 지정 */
+      "baseUrl": "./src",
+      "paths": {
+        "@apis/*": ["apis/*"],
+        "@components/*": ["components/*"],
+        "@pages/*": ["pages/*"],
+        "@assets/*": ["assets/*"],
+        "@hooks/*": ["hooks/*"],
+        "@layouts/*": ["layouts/*"],
+        "@router/*": ["router/*"],
+        "@store/*": ["store/*"],
+        "@styles/*": ["styles/*"],
+        "@types/*": ["types/*"],
+        "@utils/*": ["utils/*"]
+      },
+  
+      /* Bundler mode */
+      "moduleResolution": "node",
+      "allowImportingTsExtensions": true,
+      "isolatedModules": true,
+      "moduleDetection": "force",
+      "emitDeclarationOnly": true,
+      "jsx": "react-jsx",
+  
+      /* Linting */
+      "strict": true,
+      "noUnusedLocals": true,
+      "noUnusedParameters": true,
+      "noFallthroughCasesInSwitch": true,
+      "noUncheckedSideEffectImports": true
+    },
+    "include": ["src", "vite-env.d.ts"]
+  }
+  

@@ -1,0 +1,12 @@
+{
+  "files": [],
+  "references": [{ "path": "./tsconfig.app.json" }, { "path": "./tsconfig.node.json" }],
+  "compilerOptions": {
+    /*svg*/
+    "types": ["vite-plugin-svgr/client"],
+    "skipLibCheck": true, 
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true
+  },
+  "include": ["images.d.ts", "svg.d.ts"]
+}
