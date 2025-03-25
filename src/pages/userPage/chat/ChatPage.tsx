@@ -6,6 +6,8 @@ import SearchInput from './components/SearchInput';
 import ButtonList from './components/ButtonList';
 import Sidebar from './components/Sidebar';
 import ChatbotIcon from '@assets/chatbot.png';
+// import BookSection from '@pages/userPage/search_detail/components/BookSection'; // BookSection 컴포넌트 가져오기
+// import { books } from '@apis/SearchApi'; // API 함수 및 데이터 타입 가져오기
 
 const buttonTexts = ['상황에 맞는 책 추천', '학습에 맞는 책 추천', '키워드로 책 추천'];
 const questions = [
@@ -22,13 +24,15 @@ const answers = [
 const ChatPage: React.FC = () => {
   const [inputValue, setInputValue] = useState('');
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const [chatRooms, setChatRooms] = useState<{ id: number; history: { question: string; answer: string }[] }[]>([]);
+  const [chatRooms, setChatRooms] = useState<{ id: number; history: { question: string; answer: string }[]; selectedButton: number }[]>([]);
   const [currentRoomId, setCurrentRoomId] = useState<number | null>(null);
   const [pendingQuestion, setPendingQuestion] = useState<string | null>(null);
+  //const [bookList, setBookList] = useState<books[]>([]); // bookList 상태 추가
+
 
   const createNewChatRoom = () => {
     const newRoomId = chatRooms.length + 1;
-    setChatRooms((prevRooms) => [...prevRooms, { id: newRoomId, history: [] }]);
+    setChatRooms((prevRooms) => [...prevRooms, { id: newRoomId, history: [], selectedButton: 0 }]);
     setCurrentRoomId(newRoomId);
   };
 
@@ -74,8 +78,54 @@ const ChatPage: React.FC = () => {
       }, 0);
       // askQuestion(question);
     }
+    setChatRooms((prevRooms) =>
+      prevRooms.map((room) =>
+        room.id === currentRoomId
+          ? { ...room, selectedButton: index }
+          : room
+      )
+    );
   };
 
+  const handleSend = async () => {
+    if (inputValue.trim()) {
+      if (currentRoomId === null) createNewChatRoom();
+      addQuestionToHistory(inputValue);
+      setInputValue(''); // 여기로 이동
+
+      try {
+        const selectedButtonIndex = chatRooms.find((room) => room.id === currentRoomId)?.selectedButton ?? 0;
+        const postResponse = await fetch('http://localhost:3003/api/llm/chat', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ question: inputValue, type: selectedButtonIndex+1||1 }),    //레전드 스파게티...llm에서 명령 버튼을 1,2,3으로 구분함 ㅠ
+        });
+        const postData = await postResponse.json();
+        updateChatHistory(postData.answer);
+            if(postData && postData.answer){
+              const response = await fetch(`http://localhost:3003/api/llm/chat/search?query=${encodeURIComponent(postData.books)}`, {
+                method: 'GET',
+              });
+              const getData = await response.json();
+              /*
+              if (Array.isArray(getData)) {
+                setBookList(getData);
+                console.log('Books data:', getData);
+              } else {
+                  updateChatHistory('오류가 발생했습니다.-getData is not array');
+              }*/
+            }
+        } catch (error) {
+            console.log('Error during API call:', error);
+            updateChatHistory('오류가 발생했습니다.');
+        } finally {
+            setInputValue('');
+        }
+    }
+  }; 
+  
   const addQuestionToHistory = (question: string) => {
     if (currentRoomId !== null) {
       setChatRooms((prevRooms) =>
@@ -90,7 +140,9 @@ const ChatPage: React.FC = () => {
       );
     }
   };
+  
 
+/*
   const handleSend = () => {
     if (inputValue.trim()) {
       if (currentRoomId === null) createNewChatRoom();
@@ -103,8 +155,7 @@ const ChatPage: React.FC = () => {
 
       setInputValue('');
     }
-  };
-
+  };*/
   const currentChatHistory = chatRooms.find((room) => room.id === currentRoomId)?.history || [];
 
   return (
@@ -144,6 +195,7 @@ const ChatPage: React.FC = () => {
             <SearchInputWrapper>
               <SearchInput inputValue={inputValue} setInputValue={setInputValue} onSend={handleSend} />
             </SearchInputWrapper>
+
           </ChatSection>
         )}
       </ContentWrapper>
