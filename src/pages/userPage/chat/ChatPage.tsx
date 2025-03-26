@@ -6,8 +6,8 @@ import SearchInput from './components/SearchInput';
 import ButtonList from './components/ButtonList';
 import Sidebar from './components/Sidebar';
 import ChatbotIcon from '@assets/chatbot.png';
-// import BookSection from '@pages/userPage/search_detail/components/BookSection'; // BookSection 컴포넌트 가져오기
-// import { books } from '@apis/SearchApi'; // API 함수 및 데이터 타입 가져오기
+import { books } from '@apis/SearchApi'; // API 함수 및 데이터 타입 가져오기
+import BookSection from './components/BookSection';
 
 const buttonTexts = ['상황에 맞는 책 추천', '학습에 맞는 책 추천', '키워드로 책 추천'];
 const questions = [
@@ -27,7 +27,7 @@ const ChatPage: React.FC = () => {
   const [chatRooms, setChatRooms] = useState<{ id: number; history: { question: string; answer: string }[]; selectedButton: number }[]>([]);
   const [currentRoomId, setCurrentRoomId] = useState<number | null>(null);
   const [pendingQuestion, setPendingQuestion] = useState<string | null>(null);
-  //const [bookList, setBookList] = useState<books[]>([]); // bookList 상태 추가
+  const [bookList, setBookList] = useState<books[]>([]); // bookList 상태 추가
 
 
   const createNewChatRoom = () => {
@@ -109,13 +109,13 @@ const ChatPage: React.FC = () => {
                 method: 'GET',
               });
               const getData = await response.json();
-              /*
+              
               if (Array.isArray(getData)) {
                 setBookList(getData);
                 console.log('Books data:', getData);
               } else {
                   updateChatHistory('오류가 발생했습니다.-getData is not array');
-              }*/
+              }
             }
         } catch (error) {
             console.log('Error during API call:', error);
@@ -195,7 +195,25 @@ const ChatPage: React.FC = () => {
             <SearchInputWrapper>
               <SearchInput inputValue={inputValue} setInputValue={setInputValue} onSend={handleSend} />
             </SearchInputWrapper>
-
+            {bookList.length > 0 ? (
+              bookList.map((book, index) => (
+                <BookSection
+                  key={index}
+                  coverImage={book?.coverImage || "@assets/book.jpg"}
+                  title={book?.title || "제목 없음"}
+                  author={book?.author || "저자 없음"}
+                  publisher={book?.publisher || "출판사 없음"}
+                  publishYear={book?.publishYear || "정보 없음"}
+                  genre={book?.genre || "장르 없음"}
+                  id={book?.id || "정보 없음"}
+                  location={book?.location || [0, 0]}
+                  bookSize={book?.bookSize || 0}
+                  currentState={book?.currentState || false}
+                />
+              ))
+            ) : (
+              <div>책 데이터를 불러오는 중입니다...</div>
+            )}
           </ChatSection>
         )}
       </ContentWrapper>
