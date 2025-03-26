@@ -195,8 +195,12 @@ const ChatPage: React.FC = () => {
                     <ChatbotIconWrapper>
                       <img src={ChatbotIcon} alt='chatbot' />
                     </ChatbotIconWrapper>
-                    <MessageText>{chat.answer || '...'}</MessageText>
-                    <MessageText onClick={handleOutBookClick}>책 목록 보기</MessageText>
+                    <BotAnswer>
+                      <MessageText>{chat.answer || '...'}</MessageText>
+                      {index > 0 && (
+                        <ModalButton onClick={handleOutBookClick}>책 목록 보기</ModalButton>
+                      )}
+                    </BotAnswer>
                   </BotMessage>
                 </ChatBubble>
               ))}
@@ -313,9 +317,9 @@ const ModalContent = styled.div`
   flex-direction: column;
   align-items: center;
   text-align: center;
-  width: 400px;
+  width: 580px;
   gap: 8px;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0px 4px 6px rgb(0, 0, 0, 0.5);
 `;
 
 const ModalButton = styled.button`
@@ -323,15 +327,12 @@ const ModalButton = styled.button`
   font-size: 16px;
   border: none;
   border-radius: 5px;
+  margin: 10px;
   cursor: pointer;
-
-  &:nth-child(1) {
-    background-color: #157a63;
-    color: white;
-
-    &:hover {
-      background-color: #136f57;
-    }
+  background-color:${({ theme }) => theme.colors.primary[5]};
+  color: white;
+  &:hover {
+    background-color: rgb(5, 54, 67, 0.9);
   }
 `;
 
@@ -362,6 +363,15 @@ const BotMessage = styled.div`
   max-width: 80%;
   gap: 10px;
 `;
+
+const BotAnswer = styled.div`
+  display: flex;
+  flex-direction: column;
+  color: black;
+  padding: 15px;
+  max-width: 80%;
+  gap: 10px;
+`
 
 const MessageText = styled.div`
   font-size: 1rem;

@@ -128,7 +128,7 @@ const CardContainer = styled.div`
   border: none;
   outline: 0.5px solid #000;
   box-shadow: 8px 8px 4px 0px rgba(0, 0, 0, 0.25);
-  margin: 0px 0px 20px 90px;
+  margin-top: 20px;
 `;
 
 const CardImageWrapper = styled.div`
