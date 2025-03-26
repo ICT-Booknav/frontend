@@ -119,14 +119,15 @@ export default BookSection;
 const CardContainer = styled.div`
   background-color: #ffffff;
   display: flex;
-  width: 800px;
+  width: 500px;
   padding: 15px;
   align-items: center;
-  gap: 37px;
+  gap: 17px;
   border-radius: 30px;
   border: none;
   outline: 0.5px solid #000;
   box-shadow: 8px 8px 4px 0px rgba(0, 0, 0, 0.25);
+  margin: 0px 0px 20px 90px;
 `;
 
 const CardImageWrapper = styled.div`
@@ -135,15 +136,15 @@ const CardImageWrapper = styled.div`
 `;
 
 const CardImage = styled.img`
-  height: 160px;
-  width: 120px;
+  height: 120px;
+  width: 100px;
   object-fit: cover;
   border-radius: 10px;
 `;
 
 const OutBook = styled.button`
-  width: 157px;
-  height: 157px;
+  width: 107px;
+  height: 107px;
   background-color: #157a63;
   border-radius: 15px;
   color: white;
@@ -169,14 +170,14 @@ const ModalOverlay = styled.div`
 
 const ModalContent = styled.div`
   background: white;
-  padding: 20px;
+  padding: 10px;
   border-radius: 10px;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
   width: 400px;
-  gap: 10px;
+  gap: 8px;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 `;
 

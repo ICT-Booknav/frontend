@@ -191,29 +191,25 @@ const ChatPage: React.FC = () => {
                   </BotMessage>
                 </ChatBubble>
               ))}
+              {bookList.map((book, index) => (
+                  <BookSection
+                    key={index}
+                    coverImage={book?.coverImage || "@assets/book.jpg"}
+                    title={book?.title || "제목 없음"}
+                    author={book?.author || "저자 없음"}
+                    publisher={book?.publisher || "출판사 없음"}
+                    publishYear={book?.publishYear || "정보 없음"}
+                    genre={book?.genre || "장르 없음"}
+                    id={book?.id || "정보 없음"}
+                    location={book?.location || [0, 0]}
+                    bookSize={book?.bookSize || 0}
+                    currentState={book?.currentState || false}
+                  />
+                ))}
             </ChatWindow>
             <SearchInputWrapper>
               <SearchInput inputValue={inputValue} setInputValue={setInputValue} onSend={handleSend} />
             </SearchInputWrapper>
-            {bookList.length > 0 ? (
-              bookList.map((book, index) => (
-                <BookSection
-                  key={index}
-                  coverImage={book?.coverImage || "@assets/book.jpg"}
-                  title={book?.title || "제목 없음"}
-                  author={book?.author || "저자 없음"}
-                  publisher={book?.publisher || "출판사 없음"}
-                  publishYear={book?.publishYear || "정보 없음"}
-                  genre={book?.genre || "장르 없음"}
-                  id={book?.id || "정보 없음"}
-                  location={book?.location || [0, 0]}
-                  bookSize={book?.bookSize || 0}
-                  currentState={book?.currentState || false}
-                />
-              ))
-            ) : (
-              <div>책 데이터를 불러오는 중입니다...</div>
-            )}
           </ChatSection>
         )}
       </ContentWrapper>
@@ -315,6 +311,5 @@ const SearchInputWrapper = styled.div`
   display: flex;
   align-items: center;
   padding: 10px 0;
-  background-color: white;
   position: relative;
 `;

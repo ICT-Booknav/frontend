@@ -21,7 +21,6 @@ const CardInfo: React.FC<CardInfoProps> = ({
   publisher,
   publishYear,
   genre,
-  id,
   location,
   bookSize, 
   currentState,
@@ -62,7 +61,7 @@ const CardInfo: React.FC<CardInfoProps> = ({
       <TitleWrapper>
         <Typography variant="titleXxxSmall">{title}</Typography>
         <StateIndicator availability={currentState} onClick={handleStateIndicatorClick}>
-          {currentState ? "✓ 도서 확인 가능" : "X 도서 확인 불가"}
+          {currentState ? "위치" : "X"}
         </StateIndicator>
       </TitleWrapper>
 
@@ -71,14 +70,9 @@ const CardInfo: React.FC<CardInfoProps> = ({
       <Details>
         <Typography variant="captionDefault">
           <DetailLabel>지은이: {author}</DetailLabel>
-        </Typography>
-        <Typography variant="captionDefault">
           <DetailLabel>출판사: {publisher}</DetailLabel>
           <DetailLabel>출판연도: {publishYear || "N/A"}</DetailLabel>
-        </Typography>
-        <Typography variant="captionDefault">
           <DetailLabel>분류: {genre || "미분류"}</DetailLabel>
-          <DetailLabel>청구기호: {id}</DetailLabel>
         </Typography>
       </Details>
 
@@ -143,7 +137,6 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   width: 60%;
-  padding: 6px;
   gap: 10px;
   border: none;
   border-radius: 8px;
@@ -160,12 +153,12 @@ const StateIndicator = styled.button.withConfig({
   shouldForwardProp: (prop) => prop !== "availability",
 })<{ availability?: boolean }>`
   font-weight: bold;
-  font-size: 14px;
-  min-width: 136px;
+  font-size: 12px;
+  min-width: 50px;
   background-color: #e0e0e0;
   border-radius: 100px;
   border: none;
-  padding: 8px 16px;
+  padding: 6px 12px;
   color: ${({ availability }) => (availability ? "#0470D6" : "#D92124")};
 
   &:hover {
@@ -179,7 +172,7 @@ const Button = styled.button`
   color: white;
   border: none;
   border-radius: 100px;
-  padding: 8px 16px;
+  padding: 4px 8px;
   cursor: pointer;
 
   &:hover {
@@ -197,12 +190,12 @@ const Details = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 7px;
+  gap: 3px;
 `;
 
 const DetailLabel = styled.span`
   font-weight: semibold;
-  margin-right: 40px;
+  margin-right: 10px;
 `;
 
 const ModalOverlay = styled.div`
@@ -219,7 +212,7 @@ const ModalOverlay = styled.div`
 
 const ModalContent = styled.div`
   background: white;
-  padding: 20px;
+  padding: 10px;
   border-radius: 10px;
   text-align: center;
   width: 430px;
