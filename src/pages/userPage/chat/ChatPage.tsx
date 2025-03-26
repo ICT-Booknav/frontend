@@ -28,6 +28,7 @@ const ChatPage: React.FC = () => {
   const [currentRoomId, setCurrentRoomId] = useState<number | null>(null);
   const [pendingQuestion, setPendingQuestion] = useState<string | null>(null);
   const [bookList, setBookList] = useState<books[]>([]); // bookList 상태 추가
+  const [isModalOpen, setIsModalOpen] = useState(false); // 모달 상태 관리
 
 
   const createNewChatRoom = () => {
@@ -141,6 +142,13 @@ const ChatPage: React.FC = () => {
     }
   };
   
+  const handleOutBookClick = () => {
+    setIsModalOpen(true); // 모달 열기
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false); // 모달 닫기
+  };
 
 /*
   const handleSend = () => {
@@ -188,24 +196,35 @@ const ChatPage: React.FC = () => {
                       <img src={ChatbotIcon} alt='chatbot' />
                     </ChatbotIconWrapper>
                     <MessageText>{chat.answer || '...'}</MessageText>
+                    <MessageText onClick={handleOutBookClick}>책 목록 보기</MessageText>
                   </BotMessage>
                 </ChatBubble>
               ))}
-              {bookList.map((book, index) => (
-                  <BookSection
-                    key={index}
-                    coverImage={book?.coverImage || "@assets/book.jpg"}
-                    title={book?.title || "제목 없음"}
-                    author={book?.author || "저자 없음"}
-                    publisher={book?.publisher || "출판사 없음"}
-                    publishYear={book?.publishYear || "정보 없음"}
-                    genre={book?.genre || "장르 없음"}
-                    id={book?.id || "정보 없음"}
-                    location={book?.location || [0, 0]}
-                    bookSize={book?.bookSize || 0}
-                    currentState={book?.currentState || false}
-                  />
-                ))}
+              {/* 모달 표시 */}
+              {isModalOpen && (
+                <ModalOverlay>
+                  <ModalContent>
+                    {bookList.map((book, index) => (
+                      <BookSection
+                        key={index}
+                        coverImage={book?.coverImage || "@assets/book.jpg"}
+                        title={book?.title || "제목 없음"}
+                        author={book?.author || "저자 없음"}
+                        publisher={book?.publisher || "출판사 없음"}
+                        publishYear={book?.publishYear || "정보 없음"}
+                        genre={book?.genre || "장르 없음"}
+                        id={book?.id || "정보 없음"}
+                        location={book?.location || [0, 0]}
+                        bookSize={book?.bookSize || 0}
+                        currentState={book?.currentState || false}
+                      />
+                    ))}
+                      <ModalButton onClick={handleCloseModal}>
+                        닫기
+                      </ModalButton>
+                  </ModalContent>
+                </ModalOverlay>
+              )}
             </ChatWindow>
             <SearchInputWrapper>
               <SearchInput inputValue={inputValue} setInputValue={setInputValue} onSend={handleSend} />
@@ -272,6 +291,48 @@ const ChatBubble = styled.div`
   margin-bottom: 20px;
   display: flex;
   flex-direction: column;
+`;
+
+const ModalOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const ModalContent = styled.div`
+  background: white;
+  padding: 10px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  width: 400px;
+  gap: 8px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+`;
+
+const ModalButton = styled.button`
+  padding: 10px 20px;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+
+  &:nth-child(1) {
+    background-color: #157a63;
+    color: white;
+
+    &:hover {
+      background-color: #136f57;
+    }
+  }
 `;
 
 const UserMessage = styled.div`
