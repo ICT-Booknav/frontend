@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { styled } from "styled-components";
 import Sidebar from "./components/sidebar";
 import { dummyShelves } from "@assets/dummydata/dummyadmin";
@@ -14,21 +14,15 @@ type Book = {
   };
 };
 
-type Books = Book[];
+type RowOfBooks = Book[];
+type Shelves = RowOfBooks[];
 
 type SizeLabel = "S" | "M" | "L";
 
 const AdminPage: React.FC = () => {
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  // const [addedShelves, setAddedShelves] = useState< { size: number; row: number }[] >([]);
-  // const availableRows = [1, 2, 3];
-  const [books, setBooks] = useState<{ [key: number]: Books }>({
-    1: [],
-    2: [],
-    3: [],
-  });
-  
+  const [shelves, setShelves] = useState<Shelves>([[], [], []]);
 
   const generateEmptyBooks = (count: number, bookSize: number, row: number) =>
     Array.from({ length: count }, (_, index) => ({
@@ -39,15 +33,39 @@ const AdminPage: React.FC = () => {
         row,
         column: (index % 6) + 1,
       },
-    }));  
-  
-  // const smallBooks = generateEmptyBooks(6, 1);
-  // const mediumBooks = generateEmptyBooks(4, 2);
-  // const largeBooks = generateEmptyBooks(2, 3);
+    }));
 
-  const renderBooks = (books: Books, sizeLabel: SizeLabel) => (
-    <BookGrid columns={books.length}>
-      {books.map((book) => (
+    const mapDummyShelvesToRows = () => {
+      const updatedShelves: Shelves = [[], [], []]; // 초기 빈 행 배열
+  
+      dummyShelves.forEach((dummy) => {
+        const { shelfId, row, column, bookId, size } = dummy;
+  
+        // shelfId를 기반으로 해당 책장(rowIndex)에 책 추가
+        const book: Book = {
+          id: bookId || `${size}-${row}-${column}`,
+          bookSize: size,
+          available: !!bookId,
+          bookLocation: {
+            row: shelfId, // shelfId와 연결된 row
+            column,
+          },
+        };
+  
+        updatedShelves[shelfId - 1].push(book); // shelfId가 1부터 시작한다고 가정
+      });
+  
+      setShelves(updatedShelves);
+    };
+
+    useEffect(() => {
+      // 컴포넌트가 마운트될 때 `mapDummyShelvesToRows` 호출
+      mapDummyShelvesToRows();
+    }, []);
+
+  const renderBooks = (rowBooks: RowOfBooks, sizeLabel: SizeLabel) => (
+    <BookGrid columns={rowBooks.length}>
+      {rowBooks.map((book) => (
         <BookBox
           key={book.id}
           available={book.available}
@@ -67,11 +85,12 @@ const AdminPage: React.FC = () => {
   const addBooksToShelf = (row: number, size: number) => {
     const count = size === 1 ? 6 : size === 2 ? 4 : size === 3 ? 2 : 0;
     const newBooks = generateEmptyBooks(count, size, row);
-  
-    setBooks((prevBooks) => ({
-      ...prevBooks,
-      [row]: [...prevBooks[row], ...newBooks],
-    }));
+
+    setShelves((prevShelves) =>
+      prevShelves.map((shelf, idx) =>
+        idx === row - 1 ? [...shelf, ...newBooks] : shelf
+      )
+    );
   };
 
   return (
@@ -87,34 +106,33 @@ const AdminPage: React.FC = () => {
         // availableRows={availableRows}
       />
       <ContentWrapper $isSidebarOpen={isSidebarOpen}>
-      {Object.keys(books).map((row) => (
-        <ModalContent key={row}>
-          <Typography variant="titleXxSmall">책장 {row}</Typography>
+      {shelves.map((row, rowIndex) => (
+        <ModalContent key={rowIndex}>
+          <Typography variant="titleXxSmall">책장 {rowIndex + 1}</Typography>
           {[1, 2, 3].map((size) => {
-            if (size === 1) {
-              return renderBooks(
-                books[Number(row)].filter((book: { bookSize: number }) => book.bookSize === 1),
-                "S"
-              );
-            } else if (size === 2) {
-              return renderBooks(
-                books[Number(row)].filter((book: { bookSize: number }) => book.bookSize === 2),
-                "M"
-              );
-            } else if (size === 3) {
-              return renderBooks(
-                books[Number(row)].filter((book: { bookSize: number }) => book.bookSize === 3),
-                "L"
-              );
-            }
-            return null;
-          })}
-
+              if (size === 1) {
+                return renderBooks(
+                  row.filter((book) => book.bookSize === 1),
+                  "S"
+                );
+              } else if (size === 2) {
+                return renderBooks(
+                  row.filter((book) => book.bookSize === 2),
+                  "M"
+                );
+              } else if (size === 3) {
+                return renderBooks(
+                  row.filter((book) => book.bookSize === 3),
+                  "L"
+                );
+              }
+              return null;
+            })}
           <Divider />
           <B>
-            <StyledButton onClick={() => addBooksToShelf(Number(row), 1)}>작은 책 추가</StyledButton>
-            <StyledButton onClick={() => addBooksToShelf(Number(row), 2)}>중간 책 추가</StyledButton>
-            <StyledButton onClick={() => addBooksToShelf(Number(row), 3)}>큰 책 추가</StyledButton>
+            <StyledButton onClick={() => addBooksToShelf(Number(rowIndex + 1), 1)}>작은 책 추가</StyledButton>
+            <StyledButton onClick={() => addBooksToShelf(Number(rowIndex + 1), 2)}>중간 책 추가</StyledButton>
+            <StyledButton onClick={() => addBooksToShelf(Number(rowIndex + 1), 3)}>큰 책 추가</StyledButton>
           </B>
         </ModalContent>
       ))}
