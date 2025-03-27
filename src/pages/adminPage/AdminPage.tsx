@@ -71,9 +71,9 @@ const AdminPage: React.FC = () => {
         onToggle={setIsSidebarOpen}
         totalBooksCount={dummyShelves.length}
         currentBooksCount={dummyShelves.filter((shelf) => shelf.bookId !== null).length}
-        smallBookCount={dummyShelves.filter((shelf) => shelf.size === 1).length}
-        mediumBookCount={dummyShelves.filter((shelf) => shelf.size === 2).length}
-        bigBookCount={dummyShelves.filter((shelf) => shelf.size === 3).length}
+        smallBookCount={dummyShelves.filter((shelf) => shelf.bookId !== null && shelf.size === 1).length}
+        mediumBookCount={dummyShelves.filter((shelf) => shelf.bookId !== null && shelf.size === 2).length}
+        bigBookCount={dummyShelves.filter((shelf) => shelf.bookId !== null && shelf.size === 3).length}
         // onAddShelf={handleAddShelf}
         // availableRows={availableRows}
       />
