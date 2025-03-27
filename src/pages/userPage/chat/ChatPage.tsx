@@ -6,6 +6,8 @@ import SearchInput from './components/SearchInput';
 import ButtonList from './components/ButtonList';
 import Sidebar from './components/Sidebar';
 import ChatbotIcon from '@assets/chatbot.png';
+import { books } from '@apis/SearchApi'; // API 함수 및 데이터 타입 가져오기
+import BookSection from './components/BookSection';
 
 const buttonTexts = ['상황에 맞는 책 추천', '학습에 맞는 책 추천', '키워드로 책 추천'];
 const questions = [
@@ -22,13 +24,16 @@ const answers = [
 const ChatPage: React.FC = () => {
   const [inputValue, setInputValue] = useState('');
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const [chatRooms, setChatRooms] = useState<{ id: number; history: { question: string; answer: string }[] }[]>([]);
+  const [chatRooms, setChatRooms] = useState<{ id: number; history: { question: string; answer: string }[]; selectedButton: number }[]>([]);
   const [currentRoomId, setCurrentRoomId] = useState<number | null>(null);
   const [pendingQuestion, setPendingQuestion] = useState<string | null>(null);
+  const [bookList, setBookList] = useState<books[]>([]); // bookList 상태 추가
+  const [isModalOpen, setIsModalOpen] = useState(false); // 모달 상태 관리
+
 
   const createNewChatRoom = () => {
     const newRoomId = chatRooms.length + 1;
-    setChatRooms((prevRooms) => [...prevRooms, { id: newRoomId, history: [] }]);
+    setChatRooms((prevRooms) => [...prevRooms, { id: newRoomId, history: [], selectedButton: 0 }]);
     setCurrentRoomId(newRoomId);
   };
 
@@ -74,8 +79,54 @@ const ChatPage: React.FC = () => {
       }, 0);
       // askQuestion(question);
     }
+    setChatRooms((prevRooms) =>
+      prevRooms.map((room) =>
+        room.id === currentRoomId
+          ? { ...room, selectedButton: index }
+          : room
+      )
+    );
   };
 
+  const handleSend = async () => {
+    if (inputValue.trim()) {
+      if (currentRoomId === null) createNewChatRoom();
+      addQuestionToHistory(inputValue);
+      setInputValue(''); // 여기로 이동
+
+      try {
+        const selectedButtonIndex = chatRooms.find((room) => room.id === currentRoomId)?.selectedButton ?? 0;
+        const postResponse = await fetch('http://localhost:3003/api/llm/chat', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ question: inputValue, type: selectedButtonIndex+1||1 }),    //레전드 스파게티...llm에서 명령 버튼을 1,2,3으로 구분함 ㅠ
+        });
+        const postData = await postResponse.json();
+        updateChatHistory(postData.answer);
+            if(postData && postData.answer){
+              const response = await fetch(`http://localhost:3003/api/llm/chat/search?query=${encodeURIComponent(postData.books)}`, {
+                method: 'GET',
+              });
+              const getData = await response.json();
+              
+              if (Array.isArray(getData)) {
+                setBookList(getData);
+                console.log('Books data:', getData);
+              } else {
+                  updateChatHistory('오류가 발생했습니다.-getData is not array');
+              }
+            }
+        } catch (error) {
+            console.log('Error during API call:', error);
+            updateChatHistory('오류가 발생했습니다.');
+        } finally {
+            setInputValue('');
+        }
+    }
+  }; 
+  
   const addQuestionToHistory = (question: string) => {
     if (currentRoomId !== null) {
       setChatRooms((prevRooms) =>
@@ -90,7 +141,16 @@ const ChatPage: React.FC = () => {
       );
     }
   };
+  
+  const handleOutBookClick = () => {
+    setIsModalOpen(true); // 모달 열기
+  };
 
+  const handleCloseModal = () => {
+    setIsModalOpen(false); // 모달 닫기
+  };
+
+/*
   const handleSend = () => {
     if (inputValue.trim()) {
       if (currentRoomId === null) createNewChatRoom();
@@ -103,8 +163,7 @@ const ChatPage: React.FC = () => {
 
       setInputValue('');
     }
-  };
-
+  };*/
   const currentChatHistory = chatRooms.find((room) => room.id === currentRoomId)?.history || [];
 
   return (
@@ -136,10 +195,40 @@ const ChatPage: React.FC = () => {
                     <ChatbotIconWrapper>
                       <img src={ChatbotIcon} alt='chatbot' />
                     </ChatbotIconWrapper>
-                    <MessageText>{chat.answer || '...'}</MessageText>
+                    <BotAnswer>
+                      <MessageText>{chat.answer || '...'}</MessageText>
+                      {index > 0 && (
+                        <ModalButton onClick={handleOutBookClick}>책 목록 보기</ModalButton>
+                      )}
+                    </BotAnswer>
                   </BotMessage>
                 </ChatBubble>
               ))}
+              {/* 모달 표시 */}
+              {isModalOpen && (
+                <ModalOverlay>
+                  <ModalContent>
+                    {bookList.map((book, index) => (
+                      <BookSection
+                        key={index}
+                        coverImage={book?.coverImage || "@assets/book.jpg"}
+                        title={book?.title || "제목 없음"}
+                        author={book?.author || "저자 없음"}
+                        publisher={book?.publisher || "출판사 없음"}
+                        publishYear={book?.publishYear || "정보 없음"}
+                        genre={book?.genre || "장르 없음"}
+                        id={book?.id || "정보 없음"}
+                        location={book?.location || [0, 0]}
+                        bookSize={book?.bookSize || 0}
+                        currentState={book?.currentState || false}
+                      />
+                    ))}
+                      <ModalButton onClick={handleCloseModal}>
+                        닫기
+                      </ModalButton>
+                  </ModalContent>
+                </ModalOverlay>
+              )}
             </ChatWindow>
             <SearchInputWrapper>
               <SearchInput inputValue={inputValue} setInputValue={setInputValue} onSend={handleSend} />
@@ -208,6 +297,45 @@ const ChatBubble = styled.div`
   flex-direction: column;
 `;
 
+const ModalOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const ModalContent = styled.div`
+  background: white;
+  padding: 10px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  width: 580px;
+  gap: 8px;
+  box-shadow: 0px 4px 6px rgb(0, 0, 0, 0.5);
+`;
+
+const ModalButton = styled.button`
+  padding: 10px 20px;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  margin: 10px;
+  cursor: pointer;
+  background-color:${({ theme }) => theme.colors.primary[5]};
+  color: white;
+  &:hover {
+    background-color: rgb(5, 54, 67, 0.9);
+  }
+`;
+
 const UserMessage = styled.div`
   align-self: flex-end;
   background-color: ${({ theme }) => theme.colors.primary[5]};
@@ -236,6 +364,15 @@ const BotMessage = styled.div`
   gap: 10px;
 `;
 
+const BotAnswer = styled.div`
+  display: flex;
+  flex-direction: column;
+  color: black;
+  padding: 15px;
+  max-width: 80%;
+  gap: 10px;
+`
+
 const MessageText = styled.div`
   font-size: 1rem;
   line-height: 1.4;
@@ -245,6 +382,5 @@ const SearchInputWrapper = styled.div`
   display: flex;
   align-items: center;
   padding: 10px 0;
-  background-color: white;
   position: relative;
 `;
