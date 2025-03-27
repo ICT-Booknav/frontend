@@ -62,6 +62,7 @@ const BookSection: React.FC<CardProps> = ({
     } finally {
         setLoading(false); // 로딩 종료
         setIsModalOpen(false); // 모달 닫기
+        alert("주문하신 책 나왔습니다.");
     }
 };
 
