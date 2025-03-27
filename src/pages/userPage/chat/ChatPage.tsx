@@ -7,6 +7,7 @@ import ButtonList from './components/ButtonList';
 import Sidebar from './components/Sidebar';
 import ChatbotIcon from '@assets/chatbot.png';
 import { books } from '@apis/SearchApi'; // API 함수 및 데이터 타입 가져오기
+import { postQuestion, getBooks } from '@apis/ChatApi';
 import BookSection from './components/BookSection';
 
 const buttonTexts = ['상황에 맞는 책 추천', '학습에 맞는 책 추천', '키워드로 책 추천'];
@@ -93,39 +94,34 @@ const ChatPage: React.FC = () => {
       if (currentRoomId === null) createNewChatRoom();
       addQuestionToHistory(inputValue);
       setInputValue(''); // 여기로 이동
-
+  
       try {
-        const selectedButtonIndex = chatRooms.find((room) => room.id === currentRoomId)?.selectedButton ?? 0;
-        const postResponse = await fetch('http://localhost:3003/api/llm/chat', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ question: inputValue, type: selectedButtonIndex+1||1 }),    //레전드 스파게티...llm에서 명령 버튼을 1,2,3으로 구분함 ㅠ
-        });
-        const postData = await postResponse.json();
+        const selectedButtonIndex =
+          chatRooms.find((room) => room.id === currentRoomId)?.selectedButton ?? 0;
+  
+        // postQuestion 호출
+        const postData = await postQuestion(inputValue, selectedButtonIndex + 1 || 1);
         updateChatHistory(postData.answer);
-            if(postData && postData.answer){
-              const response = await fetch(`http://localhost:3003/api/llm/chat/search?query=${encodeURIComponent(postData.books)}`, {
-                method: 'GET',
-              });
-              const getData = await response.json();
-              
-              if (Array.isArray(getData)) {
-                setBookList(getData);
-                console.log('Books data:', getData);
-              } else {
-                  updateChatHistory('오류가 발생했습니다.-getData is not array');
-              }
-            }
-        } catch (error) {
-            console.log('Error during API call:', error);
-            updateChatHistory('오류가 발생했습니다.');
-        } finally {
-            setInputValue('');
+  
+        // 책 데이터 가져오기
+        if (postData && postData.books) {
+          const getData = await getBooks(postData.books);
+  
+          if (Array.isArray(getData)) {
+            setBookList(getData);
+            console.log('Books data:', getData);
+          } else {
+            updateChatHistory('오류가 발생했습니다.-getData is not array');
+          }
         }
+      } catch (error) {
+        console.log('Error during API call:', error);
+        updateChatHistory('오류가 발생했습니다.');
+      } finally {
+        setInputValue('');
+      }
     }
-  }; 
+  };
   
   const addQuestionToHistory = (question: string) => {
     if (currentRoomId !== null) {
@@ -150,20 +146,6 @@ const ChatPage: React.FC = () => {
     setIsModalOpen(false); // 모달 닫기
   };
 
-/*
-  const handleSend = () => {
-    if (inputValue.trim()) {
-      if (currentRoomId === null) createNewChatRoom();
-      addQuestionToHistory(inputValue);
-      // askQuestion(inputValue);
-
-      setTimeout(() => {
-        updateChatHistory('이것은 예제 답변입니다.');
-      }, 500);
-
-      setInputValue('');
-    }
-  };*/
   const currentChatHistory = chatRooms.find((room) => room.id === currentRoomId)?.history || [];
 
   return (
