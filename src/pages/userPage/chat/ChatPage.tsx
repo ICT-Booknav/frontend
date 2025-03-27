@@ -298,6 +298,7 @@ const ChatBubble = styled.div`
 `;
 
 const ModalOverlay = styled.div`
+  z-index: 999;
   position: fixed;
   top: 0;
   left: 0;
@@ -383,4 +384,5 @@ const SearchInputWrapper = styled.div`
   align-items: center;
   padding: 10px 0;
   position: relative;
+  z-index: 1;
 `;
